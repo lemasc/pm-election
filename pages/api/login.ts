@@ -8,20 +8,7 @@ import {
   APIResponse,
 } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
-
-type Votes = {
-  selected: number,
-  name: string
-}
-export type LoginResult = {
-  term: "1/2564";
-  stdID: string;
-  stdNo: string;
-  stdName: string;
-  stdClass: string;
-  promptID: true;
-  votes?: Votes
-};
+import { LoginResult } from "@/types/login";
 
 const params = ["stdID", "stdIDCard", "captcha"];
 
@@ -41,6 +28,7 @@ const fieldNames = {
   "ชื่อ-นามสกุล": "stdName",
   ระดับชั้นปัจจุบัน: "stdClass",
 };
+const ignoreFields = ["stdIDCard","term"]
 
 async function handler(
   req: NextApiSessionRequest,
@@ -78,7 +66,7 @@ async function handler(
       const name = fieldNames[row.cells.item(0).textContent];
       // @ts-ignore: Object is possibly 'null'.
       const value = row.cells.item(1).textContent;
-      if (name !== "stdIDCard") {
+      if (!ignoreFields.includes(name)) {
         data.push([name, value]);
       }
     });

@@ -8,7 +8,7 @@ import {
   NextApiSessionRequest,
 } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
-import { LoginResult } from "./login";
+import { LoginResult } from "@/types/login";
 
 async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
   try {

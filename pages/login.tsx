@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import Layout from "@/components/layout";
+import Wizard from "@/components/wizard";
 
 type LoginForm = {
   stdID: string;
@@ -29,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
   }
 );
 
-export default function Login() {
+export default function LoginPage() {
   const [fetching, setFetch] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [captcha, setCaptcha] = useState(false);
@@ -65,12 +63,8 @@ export default function Login() {
   }, [isValidating, error]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
-      <Head>
-        <title>เข้าสู่ระบบ : WPM Election System</title>
-      </Head>
-      <Header step={1} desc="เข้าสู่ระบบ" />
-      <Layout>
-        <h2 className="text-2xl font-bold">เข้าสู่ระบบ</h2>
+      <Wizard>
+        <h2 className="text-2xl">เข้าสู่ระบบ</h2>
         {Object.values(errors).length > 0 && (
           <span className="text-red-500 font-bold">
             {Object.values(errors)[0].message}
@@ -153,22 +147,20 @@ export default function Login() {
               disabled={fetching}
               onClick={() => setError(null)}
               type="reset"
-              className="px-4 py-2 btn bg-gray-200 from-gray-200 to-gray-300 ring-gray-300 font-bold"
+              className="px-4 py-2 btn bg-gray-200 from-gray-200 to-gray-300 ring-gray-300"
             >
               รีเซ็ต
             </button>
             <button
               disabled={fetching}
               type="submit"
-              className="px-4 py-2 btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 font-bold text-white"
+              className="px-4 py-2 btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
             >
               ต่อไป
             </button>
           </div>
         </form>
-      </Layout>
-
-      <Footer />
+      </Wizard>
     </div>
   );
 }
