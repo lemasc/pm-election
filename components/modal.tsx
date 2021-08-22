@@ -88,7 +88,7 @@ export default function ModalComponent({
                     "focus:outline-none text-gray-500" +
                     (!closable ? " hidden" : "")
                   }
-                  onClick={closable && onClose}
+                  onClick={() => closable && onClose()}
                   ref={closeRef}
                 >
                   <XIcon className="h-5 w-5" />
