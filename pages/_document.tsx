@@ -10,7 +10,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <meta name="description" content="ระบบการลงทะเบียนชุมนุมออนไลน์" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon.ico?v=100" />
         </Head>
         <body>
           <Main />
