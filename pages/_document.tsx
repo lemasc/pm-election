@@ -9,7 +9,10 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,700;1,400;1,700&display=swap"
             rel="stylesheet"
           />
-          <meta name="description" content="ระบบการลงทะเบียนชุมนุมออนไลน์" />
+          <meta
+            name="description"
+            content="ระบบเลือกตั้งประธานนักเรียน โรงเรียนมัธยมสาธิตวัดพระศรีมหาธาตุ มหาวิทยาลัยราชภัฎพระนคร"
+          />
           <link rel="icon" href="/favicon.ico?v=100" />
         </Head>
         <body>

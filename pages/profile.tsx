@@ -47,11 +47,6 @@ export default function Profile(props: LoginResult) {
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Head>
         <title>ตรวจสอบข้อมูล : WPM Election System</title>
-        <meta
-          name="description"
-          content="ระบบเลือกตั้งประธานนักเรียน โรงเรียนมัธยมสาธิตวัดพระศรีมหาธาตุ มหาวิทยาลัยราชภัฎพระนคร"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header step={2} desc="ตรวจสอบข้อมูล" />
       <Layout>
