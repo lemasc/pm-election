@@ -1,0 +1,22 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Sarabun", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.btn {
+  @apply focus:bg-gradient-to-b hover:bg-gradient-to-b focus:outline-none dark:focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-4 rounded;
+  @apply disabled:bg-gray-200 disabled:text-gray-500 disabled:from-gray-200 disabled:to-gray-200 disabled:cursor-not-allowed;
+}
+
+.input {
+  @apply text-center px-2 py-2 font-light border rounded-md dark:bg-black border-gray-400 hover:ring-2 hover:ring-blue-300 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
