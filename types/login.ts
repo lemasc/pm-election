@@ -3,7 +3,10 @@ type Votes = {
     name: string
 }
 export type LoginResult = {
-    term: "1/2564";
+    /**
+     * @deprecated This field is for refencing only and should not be used.
+     */
+    term?: "1/2564";
     stdID: string;
     stdNo: string;
     stdName: string;
@@ -11,3 +14,10 @@ export type LoginResult = {
     promptID: true;
     votes?: Votes
 };
+
+export type VotesData = LoginResult & Votes & {
+    ip: string,
+    useragent: string
+    timestamp?: Date,
+    uid: string
+}
