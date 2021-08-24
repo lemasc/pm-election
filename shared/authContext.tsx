@@ -133,7 +133,7 @@ export function useProvideAuth(): IAuthContext {
     });
   }, [router, user]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     let authReady: ReturnType<typeof setTimeout>;
     let target = "";
 
@@ -160,7 +160,7 @@ export function useProvideAuth(): IAuthContext {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [ready, router, user]);
-
+*/
   return {
     user,
     votes,
