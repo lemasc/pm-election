@@ -70,7 +70,7 @@ async function handler(
         return;
       }
       if(name == "stdName") {
-        value = value.replaceAll(/\s+/g," ")
+        value = value.replace(/\s+/g," ")
       }
       else if(name == "stdClass") {
         value = value.replace("มัธยมศึกษาปีที่ ","")

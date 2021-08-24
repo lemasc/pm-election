@@ -6,6 +6,7 @@ import { Transition } from "@headlessui/react";
 import { LoginIcon, UserIcon } from "@heroicons/react/outline";
 
 import logo from "../public/logo.png";
+import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,6 +14,14 @@ export default function HomePage() {
   const [hover, setHover] = useState(false);
   const [hero, setHero] = useState("");
   const [entered, setEnter] = useState(false);
+  const width = useWindowWidth();
+  function go(location: string) {
+    if (width > 640) {
+      setHero(location);
+    } else {
+      router.push(location);
+    }
+  }
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Head>
@@ -23,7 +32,7 @@ export default function HomePage() {
         <Transition
           show={hero === ""}
           appear={true}
-          className="justify-start self-stretch flex flex-col text-white sm:p-4 bg-yellow-300"
+          className="justify-start self-stretch flex flex-col text-white bg-yellow-300"
           enter="duration-1000 ease-in-out transition-width"
           enterFrom="w-0 "
           enterTo="w-full"
@@ -42,7 +51,7 @@ export default function HomePage() {
             className="flex flex-col h-full"
           ></Transition>
         </Transition>
-        <div className="flex flex-col p-10 flex-shrink-0 header-font h-screen justify-center">
+        <div className="flex flex-col p-10 flex-shrink-0 header-font justify-center">
           <div>
             <Image src={logo} alt="Logo" width={120} height={120} />
           </div>
@@ -55,7 +64,7 @@ export default function HomePage() {
           </span>
           <div className="flex flex-col gap-4 py-4">
             <button
-              onClick={() => setHero("/login")}
+              onClick={() => go("/login")}
               className="p-4 items-center justify-center gap-4 flex flex-row btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
             >
               <LoginIcon className="h-10 w-10" transform="scale(-1,1)" />
@@ -67,7 +76,7 @@ export default function HomePage() {
               </div>
             </button>
             <button
-              onClick={() => setHero("/candidates")}
+              onClick={() => go("/candidates")}
               className="p-4 items-center justify-center gap-4 flex flex-row btn bg-blue-500 from-blue-500 to-blue-600 ring-blue-500 text-white"
             >
               <UserIcon className="h-8 w-8" />
