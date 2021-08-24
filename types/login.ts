@@ -2,6 +2,14 @@ type Votes = {
     selected: number,
     name: string
 }
+
+export type LoginForm = {
+    stdID: string;
+    stdIDCard: string;
+    captcha?: string;
+    haction?: "register_step1";
+  };
+
 export type LoginResult = {
     /**
      * @deprecated This field is for refencing only and should not be used.
@@ -11,7 +19,6 @@ export type LoginResult = {
     stdNo: string;
     stdName: string;
     stdClass: string;
-    promptID: true;
     votes?: Votes
 };
 

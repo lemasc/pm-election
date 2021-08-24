@@ -8,7 +8,7 @@ export default function Profile(props: LoginResult) {
       <b>ชื่อ:</b>
       <span>{props.stdName}</span>
       <b>ชั้น:</b>
-      <span>{props.stdClass}</span>
+      <span>มัธยมศึกษาปีที่ {props.stdClass}</span>
       <b>เลขที่: </b>
       <span>{props.stdNo}</span>
       <b>สถานะ: </b>
@@ -22,9 +22,13 @@ export default function Profile(props: LoginResult) {
       {props.votes && (
         <>
           <b>ผู้สมัครที่ลงคะแนน:</b>
-          <span>
-            {props.votes.name} (เบอร์ {props.votes.selected})
-          </span>
+          {props.votes.selected !== 7 ? (
+            <span>
+              {props.votes.name} (หมายเลข {props.votes.selected})
+            </span>
+          ) : (
+            <span>ไม่ประสงค์ลงคะแนน</span>
+          )}
         </>
       )}
     </div>

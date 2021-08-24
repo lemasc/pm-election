@@ -65,10 +65,17 @@ async function handler(
       // @ts-ignore: Object is possibly 'null'.
       const name = fieldNames[row.cells.item(0).textContent];
       // @ts-ignore: Object is possibly 'null'.
-      const value = row.cells.item(1).textContent;
-      if (!ignoreFields.includes(name)) {
-        data.push([name, value]);
+      let value = row.cells.item(1).textContent as string;
+      if (ignoreFields.includes(name)) {
+        return;
       }
+      if(name == "stdName") {
+        value = value.replaceAll(/\s+/g," ")
+      }
+      else if(name == "stdClass") {
+        value = value.replace("มัธยมศึกษาปีที่ ","")
+      }
+      data.push([name, value])
     });
     if (document.querySelector("input[type='text']")) {
       data.push(["promptID", true]);
@@ -92,7 +99,8 @@ async function handler(
     req.session.set("profile", final);
     await req.session.save();
     res.status(200).json({ success: true });
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err);
     res.status(500).json({ success: false });
   }

@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { createRef, useState } from "react";
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { useWindowWidth } from "@react-hook/window-size";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { SSRContext, withSession } from "@/shared/api";
 import { LoginResult } from "@/types/login";
-import admin from "@/shared/firebase-admin";
-import ModalComponent from "@/components/modal";
+import ModalComponent from "@/components/layout/modal";
 import Wizard from "@/components/wizard";
+import { Candidates, candidates } from "@/shared/candidates";
 
-type SelectProps = LoginResult & { class: number; data: CandidateData[] };
+type SelectProps = LoginResult & { class: number; data: Candidates[] };
 export const getServerSideProps: GetServerSideProps = withSession(
   async (
     context: SSRContext
@@ -26,17 +26,6 @@ export const getServerSideProps: GetServerSideProps = withSession(
         },
       };
     }
-    const candidates = await admin
-      .firestore()
-      .collection("candidates")
-      .orderBy("order", "asc")
-      .get();
-    const data = (await Promise.all(
-      candidates.docs.map(async (d) => ({
-        id: d.id,
-        ...d.data(),
-      }))
-    )) as unknown as CandidateData[];
 
     return {
       props: {
@@ -47,31 +36,47 @@ export const getServerSideProps: GetServerSideProps = withSession(
           )
         ),
         ...profile,
-        data,
+        data: candidates,
       },
     };
   }
 );
 
-type CandidateData = {
-  id: string;
-  order: number;
-  name: string;
-};
-
 type ModalState = {
   show: boolean;
-  data?: CandidateData;
+  data?: Candidates;
 };
 
+function CandidateItem({ data }: { data: Candidates }) {
+  return (
+    <>
+      <div className="flex flex-col space-y-2 pr-2 text-sm flex-grow items-start text-left">
+        <h3 className="text-xl font-bold mr-8">{data.name}</h3>
+        <span className="font-medium text-blue-500">
+          {data.class !== "-"
+            ? `ชั้นมัธยมศึกษาปีที่ ${data.class}`
+            : `ไม่ประสงค์ลงคะแนนให้ผู้สมัครใด`}
+        </span>
+      </div>
+      <div className="flex flex-shrink-0 flex-col space-y-1 items-end font-bold">
+        <span>หมายเลข</span>
+        <b className={"text-3xl text-blue-500"}>
+          {data.order === 7 ? "-" : data.order}
+        </b>
+      </div>
+    </>
+  );
+}
 export default function SelectPage({ data, ...props }: SelectProps) {
+  const recaptchaRef = createRef<ReCAPTCHA>();
   const router = useRouter();
-  const width = useWindowWidth();
   const [modal, setModal] = useState<ModalState>({ show: false });
   const [errorText, setError] = useState<string | null>(null);
   const [fetching, setFetch] = useState(false);
   async function select() {
-    if (!modal.data) return;
+    if (!modal.data || !modal.data.order) return;
+    const token = await recaptchaRef.current?.executeAsync();
+    if (!token) return;
     try {
       setFetch(true);
       await axios.post(
@@ -79,6 +84,7 @@ export default function SelectPage({ data, ...props }: SelectProps) {
         new URLSearchParams({
           id: modal.data.order.toString(),
           name: `ชื่อ นามสกุล`,
+          token,
         })
       );
       router.replace("/success");
@@ -111,14 +117,22 @@ export default function SelectPage({ data, ...props }: SelectProps) {
         )}
         <div
           className={
-            "items-center justify-center flex-row flex-wrap flex gap-8"
+            "items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"
           }
         >
           {data &&
-            data.map((d, i) => (
+            [
+              ...data,
+              {
+                name: "ไม่ประสงค์ลงคะแนน",
+                class: "-",
+              },
+            ].map((d, i) => (
               <button
                 style={{ minWidth: 250, minHeight: 150 }}
-                onClick={() => setModal({ show: true, data: d })}
+                onClick={() =>
+                  setModal({ show: true, data: { ...d, order: i + 1 } })
+                }
                 key={d.name}
                 className={
                   "sarabun-font sm:w-auto w-full focus:outline-none border shadow-md rounded p-4 flex flex-col justify-center space-y-2 " +
@@ -126,18 +140,7 @@ export default function SelectPage({ data, ...props }: SelectProps) {
                 }
               >
                 <div className="flex w-full flex-row">
-                  <div className="flex flex-col space-y-2 pr-2 text-sm flex-grow items-start">
-                    <h3 className="text-xl font-bold text-left">
-                      ชื่อ นามสกุล
-                    </h3>
-                    <span className="font-medium text-blue-500">
-                      ผู้สมัครคนที่ {d.order}
-                    </span>
-                  </div>
-                  <div className="flex flex-shrink-0 flex-col space-y-1 items-end font-bold">
-                    <span>เบอร์</span>
-                    <b className={"text-3xl text-blue-500"}>{d.order}</b>
-                  </div>
+                  <CandidateItem data={{ ...d, order: i + 1 }} />
                 </div>
                 <div className="flex w-full flex-col items-start space-y-1 text-left">
                   <span className={"text-apple-500" + " font-bold"}>
@@ -156,31 +159,21 @@ export default function SelectPage({ data, ...props }: SelectProps) {
           closable={true}
           onClose={() => setModal((m) => ({ ...m, show: false }))}
           show={modal.show}
-          title="รายละเอียดชุมนุม"
+          title="รายละเอียดผู้ลงสมัคร"
           size="max-w-lg"
           titleClass="bg-yellow-300 text-gray-900 bg-opacity-80 font-bold sarabun-font"
         >
-          <div className="p-4 flex flex-row h-24 sarabun-font">
-            {modal.data && (
-              <>
-                <div className="flex flex-col space-y-2 pr-2 text-sm flex-grow items-start">
-                  <h3 className="text-xl font-bold text-left">ชื่อ นามสกุล</h3>
-                  <span className="font-medium text-blue-500">
-                    ผู้สมัครคนที่ {modal.data.order}
-                  </span>
-                </div>
-                <div className="flex flex-shrink-0 flex-col space-y-1 items-end font-bold">
-                  <span>เบอร์</span>
-                  <b className={"text-3xl text-blue-500"}>{modal.data.order}</b>
-                </div>
-              </>
-            )}
+          <div className="p-4 flex flex-row h-24 sarabun-font items-center">
+            {modal.data && <CandidateItem data={modal.data} />}
           </div>
           <div className="flex flex-col space-y-2 border-t py-4 my-2 items-center text-center sarabun-font">
-            <h3 className="text-lg font-bold">
-              คุณต้องการลงคะแนนเสียงให้เบอร์{" "}
-              {data ? modal.data && modal.data.order : 0} หรือไม่
-            </h3>
+            {modal.data && (
+              <h3 className="text-lg font-bold">
+                {modal.data.order !== 7
+                  ? `คุณต้องการลงคะแนนเสียงให้หมายเลข ${modal.data.order} หรือไม่`
+                  : "คุณไม่ต้องการลงคะแนนเสียงให้หมายเลขใดเลยหรือไม่"}
+              </h3>
+            )}
             <span>
               เมื่อกดลงคะแนนแล้วจะไม่สามารถแก้ไขในภายหลังได้
               <br />
@@ -206,6 +199,11 @@ export default function SelectPage({ data, ...props }: SelectProps) {
             </button>
           </div>
         </ModalComponent>
+        <ReCAPTCHA
+          size="invisible"
+          ref={recaptchaRef}
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA as string}
+        />
       </Wizard>
     </div>
   );

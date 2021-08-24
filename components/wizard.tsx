@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { ReactNodeArray } from "react";
 
-import Footer from "./footer";
-import Header from "./header";
+import Footer from "./layout/footer";
+import Header from "./layout/header";
 import Layout from "./layout";
 
 type WizardProps = {
@@ -52,7 +52,7 @@ export default function Wizard({ children }: WizardProps) {
       </Head>
       <Header />
       <Layout>
-        <div className="p-8 flex md:flex-col flex-row flex-wrap md:w-auto w-full border gap-4 bg-white rounded-lg flex-shrink-0">
+        <div className="text-sm sm:text-base md:p-8 p-4 mx-8 sm:mx-4 flex md:flex-col flex-row flex-wrap md:w-auto border gap-4 bg-white rounded-lg flex-shrink-0">
           {items.map((d, i) => {
             if (router.pathname == `/${d.page}` && currentPage !== i)
               setCurrentPage(i);
@@ -68,7 +68,7 @@ export default function Wizard({ children }: WizardProps) {
                 key={d.page}
               >
                 <div
-                  className={`font-bold border h-12 w-12 flex justify-center items-center rounded-lg text-lg ${
+                  className={`font-bold border h-10 w-10 md:h-12 md:w-12 flex justify-center items-center rounded-lg text-lg ${
                     i <= currentPage
                       ? i == currentPage
                         ? "bg-gradient-to-b from-purple-500 to-purple-600 text-white shadow-md"
@@ -83,7 +83,7 @@ export default function Wizard({ children }: WizardProps) {
             );
           })}
         </div>
-        <div className="shadow-md rounded-lg border bg-white p-8 flex flex-col gap-8 items-center justify-center">
+        <div className="shadow-md rounded-lg border bg-white p-8 flex flex-col gap-8 items-center justify-center mx-4">
           {children}
         </div>
       </Layout>

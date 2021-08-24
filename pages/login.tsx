@@ -1,21 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 
 import Wizard from "@/components/wizard";
-
-type LoginForm = {
-  stdID: string;
-  stdIDCard?: string;
-  captcha?: string;
-  haction?: "register_step1";
-};
+import { IDCardInput, IDInput } from "@/components/auth/inputs";
 
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import { SSRContext, withSession } from "../shared/api";
+import { SSRContext, withSession } from "@/shared/api";
+import { LoginForm } from "@/types/login";
 
 export const getServerSideProps: GetServerSideProps = withSession(
   async (context: SSRContext): Promise<GetServerSidePropsResult<any>> => {
@@ -78,35 +72,10 @@ export default function LoginPage() {
         <form className="flex flex-col gap-8" onSubmit={handleSubmit(submit)}>
           <div className="sm:grid sm:grid-cols-2 flex flex-col gap-4 text-left items-center">
             <label htmlFor="stdID">รหัสประจำตัวนักเรียน</label>
-            <input
-              className="input w-64 text-sm"
-              type="number"
-              placeholder="ป้อนรหัสประจำตัว 5 หลัก"
-              {...register("stdID", {
-                required: {
-                  value: true,
-                  message: "กรุณากรอกรหัสประจำตัว",
-                },
-              })}
-            />
+            <IDInput register={register} className="w-64" />
+
             <label htmlFor="stdIDCard">เลขบัตรประชาชน</label>
-            <input
-              className="input w-64 text-sm"
-              type="number"
-              placeholder="ป้อนเลขบัตรประชาชน 13 หลัก"
-              {...register("stdIDCard", {
-                minLength: {
-                  value: 13,
-                  message:
-                    "กรุณากรอกเลขบัตรประชาชนให้ครบ 13 ตัว หากยังไม่ได้ลงทะเบียนให้เว้นว่างไว้",
-                },
-                maxLength: {
-                  value: 13,
-                  message:
-                    "กรุณากรอกเลขบัตรประชาชนให้ครบ 13 ตัว หากยังไม่ได้ลงทะเบียนให้เว้นว่างไว้",
-                },
-              })}
-            />
+            <IDCardInput register={register} className="w-64" />
 
             <label htmlFor="captcha">รหัสยืนยันตัวตน (Captcha)</label>
             <div className="flex flex-col gap-4 items-center">
