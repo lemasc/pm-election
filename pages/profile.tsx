@@ -25,7 +25,7 @@ export default function ProfilePage() {
             <Profile {...{ ...props, votes }} />
             <span className="text-red-500 font-bold sarabun-font">
               {votes ? (
-                <>ท่านได้ลงคะแนนเลือกผู้สมัครรับเลือกตั้งในระบบแล้ว</>
+                <>คุณได้ลงคะแนนเลือกผู้สมัครรับเลือกตั้งในระบบแล้ว</>
               ) : (
                 <>
                   หากข้อมูลส่วนใดไม่ถูกต้อง กรุณายกเลิกการลงคะแนน

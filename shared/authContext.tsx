@@ -1,8 +1,14 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/router";
-import { signInWithEmailAndPassword, User } from "firebase/auth";
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+  User,
+} from "firebase/auth";
 
-import { auth, db } from "./firebase";
+import { auth } from "./firebase";
 import axios, { AxiosResponse } from "axios";
 import { CustomToken, LoginForm, LoginResult, VotesData } from "@/types/login";
 import { useDocument } from "swr-firestore-v9";
@@ -49,19 +55,30 @@ export function useProvideAuth(): IAuthContext {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<LoginResult | undefined>(undefined);
   const [ready, setReady] = useState<boolean>(false);
-  const { data: votes } = useDocument<VotesData>(
+  const [votes, setVotes] = useState<VotesData | null>(null);
+  const { data: _votes } = useDocument<VotesData>(
     user ? `/votes/${user.uid}` : null,
     {
       listen: true,
       parseDates: ["timestamp"],
     }
   );
+  useEffect(() => {
+    console.log(_votes);
+    if (_votes !== undefined) {
+      setVotes(_votes?.selected ? _votes : null);
+    } else {
+      setVotes(null);
+    }
+    setReady(_votes !== null);
+  }, [_votes]);
 
   const signIn = async (
     sid: string,
     password: string
   ): Promise<FirebaseResult> => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(auth, createEmail(sid), password);
       return { success: true };
     } catch (err) {
@@ -95,17 +112,9 @@ export function useProvideAuth(): IAuthContext {
 
   useEffect(() => {
     let _isMounted = true;
-    let authReady: ReturnType<typeof setTimeout>;
     return auth.onIdTokenChanged(async (curUser) => {
       if (!_isMounted) return;
-      if (authReady) clearTimeout(authReady);
       if (curUser) {
-        // Check previous state if user exists
-        if (curUser !== user) {
-          setReady(false);
-        } else {
-          authReady = setTimeout(() => setReady(false), 1000);
-        }
         const claims: CustomToken = (await curUser.getIdTokenResult())
           .claims as CustomToken;
         setProfile({
@@ -115,21 +124,7 @@ export function useProvideAuth(): IAuthContext {
           stdNo: claims.no,
         });
         setUser(curUser);
-        clearTimeout(authReady);
-        setReady(true);
       } else {
-        setReady(false);
-        authReady = setTimeout(() => {
-          if (
-            router.pathname.includes("/admin") &&
-            router.pathname !== "/admin" &&
-            !user
-          ) {
-            router.replace("/admin");
-          } else {
-            setReady(true);
-          }
-        }, 1000);
         setUser(null);
       }
       return () => {
@@ -137,6 +132,34 @@ export function useProvideAuth(): IAuthContext {
       };
     });
   }, [router, user]);
+
+  useEffect(() => {
+    let authReady: ReturnType<typeof setTimeout>;
+    let target = "";
+
+    const handleRouteChange = (url: string) => {
+      if (authReady) clearTimeout(authReady);
+      console.log(`App is changing to ${url}`);
+      console.log(user);
+      if (user !== undefined && user !== null) return;
+      authReady = setTimeout(() => {
+        if (ready && user === null) {
+          if (url.includes("/admin") && url !== "/admin") {
+            target = "/admin";
+          } else if (url !== "/" && url !== "/login") {
+            target = "/";
+          }
+          target !== "" && router.replace(target);
+        }
+      }, 1000);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+    handleRouteChange(router.pathname);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [ready, router, user]);
 
   return {
     user,

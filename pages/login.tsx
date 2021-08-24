@@ -141,18 +141,19 @@ export default function LoginPage() {
           </div>
         </form>
         <span className="text-sm text-gray-500">
-          การใช้งานระบบเลือกตั้งนี้ ถือว่าท่านได้ยอมรับ{" "}
-          <Link href="/tos">
+          การใช้งานระบบเลือกตั้งนี้ ถือว่าคุณได้ยอมรับ{" "}
+          <Link href="/terms">
             <a className="underline text-blue-600 hover:text-blue-700">
-              ข้อตกลงในการใช้งาน
+              ข้อตกลงการใช้งาน
             </a>
           </Link>{" "}
-          และ
+          และ{" "}
           <Link href="/privacy">
             <a className="underline text-blue-600 hover:text-blue-700">
               นโยบายความเป็นส่วนตัว
             </a>
-          </Link>
+          </Link>{" "}
+          แล้ว
         </span>
         <ModalComponent
           show={prompt}
