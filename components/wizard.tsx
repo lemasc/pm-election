@@ -1,14 +1,16 @@
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { ReactNodeArray } from "react";
 
 import Footer from "./layout/footer";
 import Header from "./layout/header";
 import Layout from "./layout";
+const AuthSpinner = dynamic(() => import("./auth/spinner"));
 
 type WizardProps = {
-  children: ReactNodeArray;
+  children: ReactNode | ReactNodeArray;
 };
 
 type WizardItem = {
@@ -51,6 +53,7 @@ export default function Wizard({ children }: WizardProps) {
         <title>{getTitle()}</title>
       </Head>
       <Header />
+      {router.pathname !== "/login" && <AuthSpinner />}
       <Layout>
         <div className="text-sm sm:text-base md:p-8 p-4 mx-8 sm:mx-4 flex md:flex-col flex-row flex-wrap md:w-auto border gap-4 bg-white rounded-lg flex-shrink-0">
           {items.map((d, i) => {

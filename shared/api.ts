@@ -1,6 +1,7 @@
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
+  NextApiHandler,
   NextApiRequest,
   NextApiResponse,
 } from "next";
@@ -8,6 +9,9 @@ import { CookieJar } from "tough-cookie";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosCookieJarSupport from "axios-cookiejar-support";
 import { withIronSession, Handler, Session } from "next-iron-session";
+import { createEmail } from "./authContext";
+import admin from "./firebase-admin";
+import { CustomServerToken } from "@/types/login";
 
 export type APIResponse<T = any> = {
   success: boolean;
@@ -26,12 +30,110 @@ type SSRHandler<P> = (
 
 export type NextApiSessionRequest = NextApiRequest & {
   session: Session;
+  token?: CustomServerToken
 };
+
+export type SignInResponse = {
+  /** A Firebase Auth ID token for the authenticated user. */
+  idToken: string
+  /** The email for the authenticated user. */
+  email: string
+  /** A Firebase Auth refresh token for the authenticated user. */
+  refreshToken: string
+  /** The number of seconds in which the ID token expires. */
+  expiresIn: string
+  /** The uid of the authenticated user.*/
+  localId: string
+  /** Whether the email is for an existing account.*/
+  registered: boolean
+}
+
+/**
+ * Mock FirebaseAuth API class Error.
+ */
+ export class FirebaseAuthError extends Error {
+   /**
+    * The HTTP status code recieved from API
+    */
+   readonly status: number
+  /**
+   * The backend error code associated with this error.
+   */
+  readonly code: string
+  /**
+   * A custom error description.
+   */
+  readonly message: string
+  /**
+   * Converts the API error code into the Firebase JS SDK compatible error codes.
+   */
+  private generateCode(code: string) {
+    let _code: string
+    switch (code) {
+      case 'EMAIL_NOT_FOUND':
+        _code = 'invalid-email'
+        break
+      case 'INVALID_PASSWORD':
+        _code = 'wrong-password'
+        break
+      default:
+        _code = code.toLowerCase().split('_').join('-')
+    }
+    return 'auth/' + _code
+  }
+  constructor({code, status}: {code: string, status: number}) {
+    super(code)
+    this.message = code
+    this.code = this.generateCode(code)
+    this.status = status
+  }
+}
+
+/**
+ * Firebase Sign-in API Promise Wrapper.
+ *
+ * The Firebase SDK doesn't allow server to verify passwords,
+ * so we use generic API endpoint instead.
+ * @param sid Target Student ID
+ * @param password Unhashed user password
+ * @returns Promise fullfilled with the user's account token information.
+ */
+export const signInPromise = (sid: string, password: string) => {
+  return new Promise<SignInResponse>((resolve, reject) =>
+    axios
+      .post<SignInResponse>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword',
+        {
+          email: createEmail(sid),
+          password,
+          returnSecureToken: true,
+        },
+        {
+          params: {
+            key: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+          },
+        }
+      )
+      .then((d) => resolve(d.data))
+      .catch((e) => {
+        if (e.response) {
+          const response = e.response as AxiosResponse
+          const error = (e.response as AxiosResponse).data.error
+          reject(new FirebaseAuthError({code: error.message, status: response.status}))
+        } else {
+          console.error(e)
+          reject(e)
+          reject(new FirebaseAuthError({code:'network-request-failed', status: 500}))
+        }
+      })
+  )
+}
+
 
 export const sessionOptions = {
   password: process.env.SESSION_PASSWORD as string,
   cookieName: "election",
-  ttl: (60 * 60 * 1) + 60,
+  ttl: (60 * 15) + 60,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
     maxage: -1
@@ -109,5 +211,31 @@ export class APIRequest {
     const response = await axios.post(url, data, this.formatConfig(config));
     this.saveCookie(response.config.jar);
     return response;
+  }
+}
+
+
+/**
+ * withAuth API wrapper function.
+ *
+ * Protect API routes by verifying the Firebase ID tokens recieved from the Authorization header.
+ */
+ export function withAuth(handler: NextApiHandler) {
+  return async (req: NextApiSessionRequest, res: NextApiResponse<APIResponse>): Promise<void> => {
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+      return res.status(401).json({ success: false })
+    }
+    const auth = admin.auth()
+    const token = authHeader.split(' ')[1]
+    try {
+      const decodedToken = await auth.verifyIdToken(token, true)
+      if (!decodedToken || !decodedToken.uid) return res.status(401).json({ success: false })
+      req.token = decodedToken as CustomServerToken
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({ success: false })
+    }
+    return handler(req, res)
   }
 }

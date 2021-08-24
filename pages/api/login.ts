@@ -9,6 +9,7 @@ import {
 } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
+import { createEmail } from "@/shared/authContext";
 
 const params = ["stdID", "stdIDCard", "captcha"];
 
@@ -83,20 +84,18 @@ async function handler(
       data.push(["promptID", false]);
     }
     // Internal UID
-    req.session.set(
-      "uid",
-      (document.querySelector("input[type='hidden']") as HTMLInputElement).value
-    );
+    const uid=(document.querySelector("input[type='hidden']") as HTMLInputElement).value;
     const final:LoginResult = Object.fromEntries(data)
-    const votes = await admin.firestore().collection("votes").where("stdID","==", final.stdID).orderBy("timestamp","asc").limit(1).get()
-    if(votes.docs.length > 0) {
-      const doc = votes.docs[0].data()
-      final.votes = {
-        selected: doc.selected,
-        name: doc.name
-      }
-    }
-    req.session.set("profile", final);
+    await admin.auth().createUser({
+      uid,
+      email: createEmail(final.stdID),
+      displayName: final.stdName,
+      password: req.body.stdIDCard
+    })
+    await admin.auth().setCustomUserClaims(uid, {
+      no: final.stdNo,
+      class: final.stdClass
+    })
     await req.session.save();
     res.status(200).json({ success: true });
   }

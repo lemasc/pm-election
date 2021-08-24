@@ -1,46 +1,13 @@
 import { createRef, useState } from "react";
-import { GetServerSideProps, GetServerSidePropsResult } from "next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { SSRContext, withSession } from "@/shared/api";
-import { LoginResult } from "@/types/login";
-import ModalComponent from "@/components/layout/modal";
+const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 import Wizard from "@/components/wizard";
-import { Candidates, candidates } from "@/shared/candidates";
-
-type SelectProps = LoginResult & { class: number; data: Candidates[] };
-export const getServerSideProps: GetServerSideProps = withSession(
-  async (
-    context: SSRContext
-  ): Promise<GetServerSidePropsResult<SelectProps>> => {
-    const profile: LoginResult | undefined = context.req.session.get("profile");
-    if (!profile) {
-      context.req.session.destroy();
-      await context.req.session.save();
-      return {
-        redirect: {
-          destination: "/",
-          permanent: true,
-        },
-      };
-    }
-
-    return {
-      props: {
-        class: parseInt(
-          profile.stdClass.slice(
-            profile.stdClass.indexOf(" "),
-            profile.stdClass.indexOf("/")
-          )
-        ),
-        ...profile,
-        data: candidates,
-      },
-    };
-  }
-);
+import { Candidates, candidates as data } from "@/shared/candidates";
+import { useAuth } from "@/shared/authContext";
 
 type ModalState = {
   show: boolean;
@@ -67,7 +34,8 @@ function CandidateItem({ data }: { data: Candidates }) {
     </>
   );
 }
-export default function SelectPage({ data, ...props }: SelectProps) {
+export default function SelectPage() {
+  const { profile: props, user } = useAuth();
   const recaptchaRef = createRef<ReCAPTCHA>();
   const router = useRouter();
   const [modal, setModal] = useState<ModalState>({ show: false });
@@ -85,7 +53,12 @@ export default function SelectPage({ data, ...props }: SelectProps) {
           id: modal.data.order.toString(),
           name: modal.data.name,
           token,
-        })
+        }),
+        {
+          headers: {
+            Authorization: `Bearer ${await user?.getIdToken()}`,
+          },
+        }
       );
       router.replace("/success");
     } catch (err) {
@@ -98,107 +71,111 @@ export default function SelectPage({ data, ...props }: SelectProps) {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Wizard>
-        <div className="flex flex-col gap-4 font-medium">
-          <h2 className="text-2xl">เลือกผู้ลงสมัครรับเลือกตั้ง</h2>
-          <span className="text-red-500">{props.stdName}</span>
-        </div>
-        <span className="text-gray-500 text-sm leading-6 sarabun-font">
-          กรุณาลงคะแนนให้ผู้สมัครที่ต้องการ
-          เมื่อลงคะแนนแล้วจะไม่สามารถแก้ไขได้อีก
-          <br />
-          หากเกิดข้อผิดพลาดใด ๆ
-          กรุณาแจ้งคณะกรรมการนักเรียนเพื่อดำเนินการแก้ไขต่อไป
-        </span>
-
-        {errorText && (
-          <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">
-            {errorText}
-          </span>
-        )}
-        <div
-          className={
-            "items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"
-          }
-        >
-          {data &&
-            [
-              ...data,
-              {
-                name: "ไม่ประสงค์ลงคะแนน",
-                class: "-",
-              },
-            ].map((d, i) => (
-              <button
-                style={{ minWidth: 250, minHeight: 150 }}
-                onClick={() =>
-                  setModal({ show: true, data: { ...d, order: i + 1 } })
-                }
-                key={d.name}
-                className={
-                  "sarabun-font sm:w-auto w-full focus:outline-none border shadow-md rounded p-4 flex flex-col justify-center space-y-2 " +
-                  "bg-white hover:bg-gray-100 cursor-pointer "
-                }
-              >
-                <div className="flex w-full flex-row">
-                  <CandidateItem data={{ ...d, order: i + 1 }} />
-                </div>
-                <div className="flex w-full flex-col items-start space-y-1 text-left">
-                  <span className={"text-apple-500" + " font-bold"}>
-                    คลิกเพื่อลงคะแนน
-                  </span>
-                </div>
-              </button>
-            ))}
-        </div>
-        {data && data.length === 0 && (
-          <div className="flex items-center justify-center h-32 w-full">
-            ไม่มีข้อมูล
-          </div>
-        )}
-        <ModalComponent
-          closable={true}
-          onClose={() => setModal((m) => ({ ...m, show: false }))}
-          show={modal.show}
-          title="รายละเอียดผู้ลงสมัคร"
-          size="max-w-lg"
-          titleClass="bg-yellow-300 text-gray-900 bg-opacity-80 font-bold sarabun-font"
-        >
-          <div className="p-4 flex flex-row h-24 sarabun-font items-center">
-            {modal.data && <CandidateItem data={modal.data} />}
-          </div>
-          <div className="flex flex-col space-y-2 border-t py-4 my-2 items-center text-center sarabun-font">
-            {modal.data && (
-              <h3 className="text-lg font-bold">
-                {modal.data.order !== 7
-                  ? `คุณต้องการลงคะแนนเสียงให้หมายเลข ${modal.data.order} หรือไม่`
-                  : "คุณไม่ต้องการลงคะแนนเสียงให้หมายเลขใดเลยหรือไม่"}
-              </h3>
-            )}
-            <span>
-              เมื่อกดลงคะแนนแล้วจะไม่สามารถแก้ไขในภายหลังได้
+        {props && (
+          <>
+            <div className="flex flex-col gap-4 font-medium">
+              <h2 className="text-2xl">เลือกผู้ลงสมัครรับเลือกตั้ง</h2>
+              <span className="text-red-500">{props.stdName}</span>
+            </div>
+            <span className="text-gray-500 text-sm leading-6 sarabun-font">
+              กรุณาลงคะแนนให้ผู้สมัครที่ต้องการ
+              เมื่อลงคะแนนแล้วจะไม่สามารถแก้ไขได้อีก
               <br />
-              กรุณาตรวจสอบข้อมูลให้เรียบร้อย
+              หากเกิดข้อผิดพลาดใด ๆ
+              กรุณาแจ้งคณะกรรมการนักเรียนเพื่อดำเนินการแก้ไขต่อไป
             </span>
-          </div>
-          <div className="p-6 bg-gray-100 grid grid-cols-2 gap-4">
-            <button
-              disabled={fetching}
-              className="btn px-4 py-2 text-gray-800 from-gray-200 to-gray-300 bg-gray-200 ring-gray-400 sarabun-font"
-              onClick={() => setModal((m) => ({ ...m, show: false }))}
-            >
-              ยกเลิก
-            </button>
-            <button
-              disabled={fetching}
-              onClick={() => select()}
+
+            {errorText && (
+              <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">
+                {errorText}
+              </span>
+            )}
+            <div
               className={
-                "from-green-500 to-green-600 bg-green-500 ring-green-500 btn px-4 py-2 text-white sarabun-font"
+                "items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"
               }
             >
-              ลงคะแนน
-            </button>
-          </div>
-        </ModalComponent>
+              {data &&
+                [
+                  ...data,
+                  {
+                    name: "ไม่ประสงค์ลงคะแนน",
+                    class: "-",
+                  },
+                ].map((d, i) => (
+                  <button
+                    style={{ minWidth: 250, minHeight: 150 }}
+                    onClick={() =>
+                      setModal({ show: true, data: { ...d, order: i + 1 } })
+                    }
+                    key={d.name}
+                    className={
+                      "sarabun-font sm:w-auto w-full focus:outline-none border shadow-md rounded p-4 flex flex-col justify-center space-y-2 " +
+                      "bg-white hover:bg-gray-100 cursor-pointer "
+                    }
+                  >
+                    <div className="flex w-full flex-row">
+                      <CandidateItem data={{ ...d, order: i + 1 }} />
+                    </div>
+                    <div className="flex w-full flex-col items-start space-y-1 text-left">
+                      <span className={"text-apple-500" + " font-bold"}>
+                        คลิกเพื่อลงคะแนน
+                      </span>
+                    </div>
+                  </button>
+                ))}
+            </div>
+            {data && data.length === 0 && (
+              <div className="flex items-center justify-center h-32 w-full">
+                ไม่มีข้อมูล
+              </div>
+            )}
+            <ModalComponent
+              closable={true}
+              onClose={() => setModal((m) => ({ ...m, show: false }))}
+              show={modal.show}
+              title="รายละเอียดผู้ลงสมัคร"
+              size="max-w-lg"
+              titleClass="bg-yellow-300 text-gray-900 bg-opacity-80 font-bold sarabun-font"
+            >
+              <div className="p-4 flex flex-row h-24 sarabun-font items-center">
+                {modal.data && <CandidateItem data={modal.data} />}
+              </div>
+              <div className="flex flex-col space-y-2 border-t py-4 my-2 items-center text-center sarabun-font">
+                {modal.data && (
+                  <h3 className="text-lg font-bold">
+                    {modal.data.order !== 7
+                      ? `คุณต้องการลงคะแนนเสียงให้หมายเลข ${modal.data.order} หรือไม่`
+                      : "คุณไม่ต้องการลงคะแนนเสียงให้หมายเลขใดเลยหรือไม่"}
+                  </h3>
+                )}
+                <span>
+                  เมื่อกดลงคะแนนแล้วจะไม่สามารถแก้ไขในภายหลังได้
+                  <br />
+                  กรุณาตรวจสอบข้อมูลให้เรียบร้อย
+                </span>
+              </div>
+              <div className="p-6 bg-gray-100 grid grid-cols-2 gap-4">
+                <button
+                  disabled={fetching}
+                  className="btn px-4 py-2 text-gray-800 from-gray-200 to-gray-300 bg-gray-200 ring-gray-400 sarabun-font"
+                  onClick={() => setModal((m) => ({ ...m, show: false }))}
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  disabled={fetching}
+                  onClick={() => select()}
+                  className={
+                    "from-green-500 to-green-600 bg-green-500 ring-green-500 btn px-4 py-2 text-white sarabun-font"
+                  }
+                >
+                  ลงคะแนน
+                </button>
+              </div>
+            </ModalComponent>
+          </>
+        )}
         <ReCAPTCHA
           size="invisible"
           ref={recaptchaRef}

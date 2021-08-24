@@ -1,3 +1,6 @@
+import admin from "@/shared/firebase-admin";
+import { ParsedToken } from "firebase/auth";
+
 type Votes = {
     selected: number,
     name: string
@@ -19,12 +22,18 @@ export type LoginResult = {
     stdNo: string;
     stdName: string;
     stdClass: string;
-    votes?: Votes
+    votes?: Votes | null
 };
 
 export type VotesData = LoginResult & Votes & {
     ip: string,
     useragent: string
-    timestamp?: Date,
-    uid: string
+    timestamp?: Date
 }
+
+type CustomClaims = {
+    no: string,
+    class: string
+}
+export type CustomServerToken = admin.auth.DecodedIdToken & CustomClaims
+export type CustomToken = ParsedToken & CustomClaims

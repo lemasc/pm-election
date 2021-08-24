@@ -6,10 +6,12 @@ import { firestore } from "firebase-admin";
 import {
   withSession,
   NextApiSessionRequest,
+  withAuth,
 } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
 import axios from "axios";
+import { createSID } from "@/shared/authContext";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
   try {
@@ -27,23 +29,32 @@ async function verifyRecaptcha(req: NextApiSessionRequest) {
 }
 async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
   try {
-    const profile: LoginResult | undefined = req.session.get("profile");
-    if (!req.session.get("uid") || !req.body.id || !req.body.name || !req.body.token)
+    if (!req.token || !req.body.id || !req.body.name || !req.body.token)
       return res.status(400).json({ success: false });
     // Verify reCapthcha
     if(!(await verifyRecaptcha(req))) return res.status(403).json({success: false})
     const db = admin.firestore()
+    const votesRef = db.collection("votes").doc(req.token.uid)
+    if((await (votesRef.get())).exists) {
+      return res.status(409).json({success: false})
+    }
     const votes = {
       name: req.body.name,
       selected: parseInt(req.body.id),
     }
-    await db.collection("votes").add({
-        ...profile,
+    const profile: LoginResult = {
+      stdID: createSID(req.token.email as string),
+      stdName: req.token.name,
+      stdNo: req.token.no,
+      stdClass: req.token.class
+
+    }
+    await votesRef.set({
         ...votes,
+        ...profile,
         timestamp: firestore.FieldValue.serverTimestamp(),
         ip: getClientIp(req),
-        useragent: req.headers["user-agent"],
-        uid: req.session.get("uid")
+        useragent: req.headers["user-agent"]
     })
     req.session.set("profile",{...profile, votes})
     await req.session.save();
@@ -54,4 +65,4 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
   }
 }
 
-export default withSession(handler);
+export default withAuth(withSession(handler));

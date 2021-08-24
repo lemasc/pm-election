@@ -85,8 +85,11 @@ export default function ModalComponent({
                 <button
                   title="ปิด"
                   className={
-                    "focus:outline-none text-gray-500" +
-                    (!closable ? " hidden" : "")
+                    `focus:outline-none ${
+                      titleClass && titleClass.includes("bg-blue")
+                        ? "text-white"
+                        : "text-gray-800"
+                    }` + (!closable ? " hidden" : "")
                   }
                   onClick={() => closable && onClose()}
                   ref={closeRef}
