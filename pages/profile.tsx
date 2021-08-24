@@ -50,7 +50,7 @@ export default function ProfilePage(props: LoginResult) {
         <Profile {...props} />
         <span className="text-red-500 font-bold sarabun-font">
           {props.votes ? (
-            <>ท่านได้ดำเนินการลงคะแนนแล้ว ไม่สามารถลงคะแนนเพิ่มได้อีก</>
+            <>ท่านได้เลือกผู้สมัครลงคะแนนในระบบแล้ว</>
           ) : (
             <>
               หากข้อมูลส่วนใดไม่ถูกต้อง กรุณายกเลิกการลงคะแนน

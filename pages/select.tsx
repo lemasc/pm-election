@@ -83,7 +83,7 @@ export default function SelectPage({ data, ...props }: SelectProps) {
         "/api/select",
         new URLSearchParams({
           id: modal.data.order.toString(),
-          name: `ชื่อ นามสกุล`,
+          name: modal.data.name,
           token,
         })
       );
