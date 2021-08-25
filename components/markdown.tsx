@@ -28,7 +28,11 @@ export default function MarkDownComponent({
     },
   };
   return (
-    <ReactMarkdown components={components} remarkPlugins={[gfm]}>
+    <ReactMarkdown
+      className="content"
+      components={components}
+      remarkPlugins={[gfm]}
+    >
       {content}
     </ReactMarkdown>
   );
