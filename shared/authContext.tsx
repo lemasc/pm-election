@@ -31,6 +31,8 @@ export function createSID(email: string) {
   return email.slice(3, 8);
 }
 
+const authPages = ["/profile", "/select", "/success"];
+
 interface IAuthContext {
   user: User | null;
   ready: boolean;
@@ -133,7 +135,7 @@ export function useProvideAuth(): IAuthContext {
     });
   }, [router, user]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     let authReady: ReturnType<typeof setTimeout>;
     let target = "";
 
@@ -146,7 +148,7 @@ export function useProvideAuth(): IAuthContext {
         if (ready && user === null) {
           if (url.includes("/admin") && url !== "/admin") {
             target = "/admin";
-          } else if (url !== "/" && url !== "/login") {
+          } else if (authPages.includes(url)) {
             target = "/";
           }
           target !== "" && router.replace(target);
@@ -160,7 +162,7 @@ export function useProvideAuth(): IAuthContext {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [ready, router, user]);
-*/
+
   return {
     user,
     votes,
