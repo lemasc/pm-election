@@ -3,36 +3,13 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
-import Layout from "./layout";
+import Layout, { appPages } from "./layout";
 import Footer from "./layout/footer";
 const AuthSpinner = dynamic(() => import("./auth/spinner"));
 
 type WizardProps = {
   children: ReactNode | ReactNodeArray;
 };
-
-type WizardItem = {
-  page: string;
-  name: string;
-};
-export const appPages: WizardItem[] = [
-  {
-    page: "login",
-    name: "เข้าสู่ระบบ",
-  },
-  {
-    page: "profile",
-    name: "ตรวจสอบสถานะ",
-  },
-  {
-    page: "select",
-    name: "เลือกผู้ลงสมัคร",
-  },
-  {
-    page: "success",
-    name: "ลงคะแนนเสร็จสิ้น",
-  },
-];
 
 export default function Wizard({ children }: WizardProps) {
   const [currentPage, setCurrentPage] = useState(-1);

@@ -1,9 +1,30 @@
 import { useRouter } from "next/router";
 import { ReactNode, ReactNodeArray } from "react";
-import { appPages } from "../wizard";
 import MenuBarComponent from "./menubar";
 
-const appPaths = appPages.map((p) => p.page);
+type Paths = {
+  page: string;
+  name: string;
+};
+
+export const appPages: Paths[] = [
+  {
+    page: "login",
+    name: "เข้าสู่ระบบ",
+  },
+  {
+    page: "profile",
+    name: "ตรวจสอบสถานะ",
+  },
+  {
+    page: "select",
+    name: "เลือกผู้ลงสมัคร",
+  },
+  {
+    page: "success",
+    name: "ลงคะแนนเสร็จสิ้น",
+  },
+];
 
 export default function Layout({
   children,
@@ -12,7 +33,7 @@ export default function Layout({
 }) {
   const { pathname } = useRouter();
 
-  const isSelectApp = appPaths.map((a) => "/" + a).includes(pathname);
+  const isSelectApp = appPages.map((p) => "/" + p.page).includes(pathname);
   return (
     <>
       <MenuBarComponent isSelectApp={isSelectApp} />
