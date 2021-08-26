@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
-import { Components } from "react-markdown/lib/ast-to-react";
+import { Components } from "react-markdown/src/ast-to-react";
 import Link from "next/link";
 
 export default function MarkDownComponent({

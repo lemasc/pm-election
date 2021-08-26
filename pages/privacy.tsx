@@ -1,13 +1,11 @@
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import HeaderComponent from "@/components/layout/header";
-import dynamic from "next/dynamic";
 import { promises as fs } from "fs";
 import path from "path";
-const MarkDownComponent = dynamic(() => import("@/components/markdown"), {
-  ssr: false,
-});
+
+import HeaderComponent from "@/components/layout/header";
+import MarkDownComponent from "@/components/markdown";
 
 export const getStaticProps: GetStaticProps = async () => {
   const content = await fs.readFile(

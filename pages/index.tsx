@@ -65,7 +65,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-4 py-4">
             <button
               onClick={() => go("/login")}
-              className="p-4 items-center justify-center gap-4 flex flex-row btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
+              className="rounded-full p-4 items-center justify-center gap-4 flex flex-row btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
             >
               <LoginIcon className="h-10 w-10" transform="scale(-1,1)" />
               <div className="flex flex-col gap-0.5">
@@ -77,7 +77,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => go("/candidates")}
-              className="p-4 items-center justify-center gap-4 flex flex-row btn bg-blue-500 from-blue-500 to-blue-600 ring-blue-500 text-white"
+              className="rounded-full p-4 items-center justify-center gap-4 flex flex-row btn bg-blue-500 from-blue-500 to-blue-600 ring-blue-500 text-white"
             >
               <UserIcon className="h-8 w-8" />
               <span>ดูข้อมูลผู้ลงสมัครรับเลือกตั้ง</span>
@@ -90,7 +90,7 @@ export default function HomePage() {
               onBlur={() => setFocus(false)}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
-              className=" p-4 items-center justify-center gap-4 flex flex-row btn bg-white ring-2 hover:ring-0 from-purple-500 to-purple-600 ring-purple-500 text-gray-900 hover:text-white focus:text-white"
+              className="rounded-full p-4 items-center justify-center gap-4 flex flex-row btn bg-white ring-2 hover:ring-0 from-purple-500 to-purple-600 ring-purple-500 text-gray-900 hover:text-white focus:text-white"
             >
               <Image
                 alt="Instagram Icon"

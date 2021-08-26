@@ -7,6 +7,7 @@ import { ReactNodeArray } from "react";
 import Footer from "./layout/footer";
 import Header from "./layout/header";
 import Layout from "./layout";
+import MenuBarComponent from "./layout/menubar";
 const AuthSpinner = dynamic(() => import("./auth/spinner"));
 
 type WizardProps = {
@@ -52,7 +53,6 @@ export default function Wizard({ children }: WizardProps) {
       <Head>
         <title>{getTitle()}</title>
       </Head>
-      <Header />
       {router.pathname !== "/login" && <AuthSpinner />}
       <Layout>
         <div className="text-sm sm:text-base md:p-8 p-4 mx-8 sm:mx-4 flex md:flex-col flex-row flex-wrap md:w-auto border gap-4 bg-white rounded-lg flex-shrink-0">

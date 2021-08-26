@@ -1,4 +1,5 @@
 import { createRef, useState } from "react";
+import { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -6,19 +7,35 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 import Wizard from "@/components/wizard";
-import { Candidates, candidates as data } from "@/shared/candidates";
+import { Candidate, getCandidates } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
+
+type ServerProps = {
+  candidates: Candidate[];
+};
 
 type ModalState = {
   show: boolean;
-  data?: Candidates;
+  data?: Candidate;
 };
 
-function CandidateItem({ data }: { data: Candidates }) {
+export const getServerSideProps: GetServerSideProps<ServerProps> = async () => {
+  const candidates = await getCandidates(true);
+  return {
+    props: {
+      candidates,
+    },
+  };
+};
+
+function CandidateItem({ data }: { data: Candidate }) {
   return (
     <>
       <div className="flex flex-col space-y-2 pr-2 text-sm flex-grow items-start text-left">
-        <h3 className="text-xl font-bold mr-8">{data.name}</h3>
+        <h3 className="text-xl font-bold mr-8">
+          {data.title}
+          {data.name} {data.surname}
+        </h3>
         <span className="font-medium text-blue-500">
           {data.class !== "-"
             ? `ชั้นมัธยมศึกษาปีที่ ${data.class}`
@@ -28,13 +45,13 @@ function CandidateItem({ data }: { data: Candidates }) {
       <div className="flex flex-shrink-0 flex-col space-y-1 items-end font-bold">
         <span>หมายเลข</span>
         <b className={"text-3xl text-blue-500"}>
-          {data.order === 7 ? "-" : data.order}
+          {data.index === 7 ? "-" : data.index}
         </b>
       </div>
     </>
   );
 }
-export default function SelectPage() {
+export default function SelectPage({ candidates: data }: ServerProps) {
   const { profile: props, user } = useAuth();
   const recaptchaRef = createRef<ReCAPTCHA>();
   const router = useRouter();
@@ -42,7 +59,7 @@ export default function SelectPage() {
   const [errorText, setError] = useState<string | null>(null);
   const [fetching, setFetch] = useState(false);
   async function select() {
-    if (!modal.data || !modal.data.order) return;
+    if (!modal.data || !modal.data.index) return;
     const token = await recaptchaRef.current?.executeAsync();
     if (!token) return;
     try {
@@ -50,7 +67,7 @@ export default function SelectPage() {
       await axios.post(
         "/api/select",
         new URLSearchParams({
-          id: modal.data.order.toString(),
+          id: modal.data.index.toString(),
           name: modal.data.name,
           token,
         }),
@@ -99,15 +116,16 @@ export default function SelectPage() {
                 [
                   ...data,
                   {
+                    index: 7,
+                    title: "",
                     name: "ไม่ประสงค์ลงคะแนน",
+                    surname: "",
                     class: "-",
                   },
                 ].map((d, i) => (
                   <button
                     style={{ minWidth: 250, minHeight: 150 }}
-                    onClick={() =>
-                      setModal({ show: true, data: { ...d, order: i + 1 } })
-                    }
+                    onClick={() => setModal({ show: true, data: d })}
                     key={d.name}
                     className={
                       "sarabun-font sm:w-auto w-full focus:outline-none border shadow-md rounded p-4 flex flex-col justify-center space-y-2 " +
@@ -115,7 +133,7 @@ export default function SelectPage() {
                     }
                   >
                     <div className="flex w-full flex-row">
-                      <CandidateItem data={{ ...d, order: i + 1 }} />
+                      <CandidateItem data={d} />
                     </div>
                     <div className="flex w-full flex-col items-start space-y-1 text-left">
                       <span className={"text-apple-500" + " font-bold"}>
@@ -144,8 +162,8 @@ export default function SelectPage() {
               <div className="flex flex-col space-y-2 border-t py-4 my-2 items-center text-center sarabun-font">
                 {modal.data && (
                   <h3 className="text-lg font-bold">
-                    {modal.data.order !== 7
-                      ? `คุณต้องการลงคะแนนเสียงให้หมายเลข ${modal.data.order} หรือไม่`
+                    {modal.data.index !== 7
+                      ? `คุณต้องการลงคะแนนเสียงให้หมายเลข ${modal.data.index} หรือไม่`
                       : "คุณไม่ต้องการลงคะแนนเสียงให้หมายเลขใดเลยหรือไม่"}
                   </h3>
                 )}
