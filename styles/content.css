@@ -14,7 +14,7 @@
 .content > h4 {
     @apply py-2 italic;
 }
-.content ol,li {
+.content li {
     @apply ml-8 sm:ml-10;
 }
 .content ol {

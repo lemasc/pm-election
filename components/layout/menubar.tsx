@@ -32,30 +32,6 @@ const navigation: Navigation[] = [
   },
 ];
 
-function Toolbar(): JSX.Element {
-  const { signOut, profile } = useAuth();
-  return (
-    <>
-      {profile && (
-        <>
-          <button
-            title="ออกจากระบบ"
-            className="focus:outline-none"
-            onClick={() => {
-              signOut();
-            }}
-          >
-            <LogoutIcon
-              className="w-8 h-8 font-light opacity-60 hover:opacity-100"
-              strokeWidth={1}
-            />
-          </button>
-        </>
-      )}
-    </>
-  );
-}
-
 function Pages(): JSX.Element | null {
   const router = useRouter();
   return (
@@ -78,24 +54,7 @@ function Pages(): JSX.Element | null {
 export default function MenuBarComponent({
   isSelectApp,
 }: MenuBarProps): JSX.Element {
-  const [top, setTop] = useState(true);
   const width = useWindowWidth({ fps: 60 });
-  const [date, setDate] = useState(new Date());
-
-  useEffect(() => {
-    setInterval(() => {
-      setDate(new Date());
-    }, 1000);
-  }, []);
-
-  useEffect(() => {
-    const scrollHandler = (): void => {
-      window.pageYOffset > 10 ? setTop(false) : setTop(true);
-    };
-    window.addEventListener("scroll", scrollHandler);
-    return () => window.removeEventListener("scroll", scrollHandler);
-  }, [top]);
-
   return (
     <>
       <Disclosure as="nav" className="z-10">
@@ -111,9 +70,10 @@ export default function MenuBarComponent({
                 title="WPM Election System"
                 className="flex flex-row items-center select-none flex-grow"
               >
-                {width > 420 && (
+                <div className={width >= 375 ? undefined : "hidden"}>
                   <Image alt="Logo" src="/logo.png" width={50} height={50} />
-                )}
+                </div>
+
                 <h1 className={"px-4 flex flex-col header-font gap-0.5"}>
                   <span className="text-gray-900 text-lg">
                     ระบบเลือกตั้งประธานนักเรียน
@@ -157,11 +117,8 @@ export default function MenuBarComponent({
               className="fixed inset-0 mt-20 w-full"
             >
               <Disclosure.Panel static>
-                <div className="p-4 flex flex-col space-y-2 bg-gray-50 dark:bg-gray-800 rounded-b-lg w-full shadow-lg">
+                <div className="p-6 flex flex-col bg-gray-50 dark:bg-gray-800 rounded-b-lg w-full shadow-lg space-y-5">
                   <Pages />
-                  <div className="flex justify-center flex-row space-x-16 py-4">
-                    <Toolbar />
-                  </div>
                 </div>
               </Disclosure.Panel>
             </Transition>
