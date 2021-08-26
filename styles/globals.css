@@ -39,8 +39,11 @@ body {
   @apply focus:bg-gradient-to-b hover:bg-gradient-to-b focus:outline-none dark:focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-4;
   @apply disabled:bg-gray-200 disabled:text-gray-500 disabled:from-gray-200 disabled:to-gray-200 disabled:cursor-not-allowed;
 }
-.btn:not(.rounded-full) {
+.btn:not(.btn-large) {
   @apply rounded-md;
+}
+.btn-large {
+  @apply rounded-full p-4 items-center justify-center gap-4 flex flex-row;
 }
 
 .input {

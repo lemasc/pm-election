@@ -8,8 +8,8 @@ import {
   APIResponse,
 } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
-import { LoginResult } from "@/types/login";
 import { createEmail } from "@/shared/authContext";
+import { LoginResult } from "@/types/login";
 
 const params = ["stdID", "stdIDCard", "captcha"];
 
@@ -29,7 +29,7 @@ const fieldNames = {
   "ชื่อ-นามสกุล": "stdName",
   ระดับชั้นปัจจุบัน: "stdClass",
 };
-const ignoreFields = ["stdIDCard","term"]
+const ignoreFields = ["stdIDCard", "term"];
 
 async function handler(
   req: NextApiSessionRequest,
@@ -70,13 +70,12 @@ async function handler(
       if (ignoreFields.includes(name)) {
         return;
       }
-      if(name == "stdName") {
-        value = value.replace(/\s+/g," ")
+      if (name == "stdName") {
+        value = value.replace(/\s+/g, " ");
+      } else if (name == "stdClass") {
+        value = value.replace("มัธยมศึกษาปีที่ ", "");
       }
-      else if(name == "stdClass") {
-        value = value.replace("มัธยมศึกษาปีที่ ","")
-      }
-      data.push([name, value])
+      data.push([name, value]);
     });
     if (document.querySelector("input[type='text']")) {
       data.push(["promptID", true]);
@@ -84,22 +83,23 @@ async function handler(
       data.push(["promptID", false]);
     }
     // Internal UID
-    const uid=(document.querySelector("input[type='hidden']") as HTMLInputElement).value;
-    const final:LoginResult = Object.fromEntries(data)
+    const uid = (
+      document.querySelector("input[type='hidden']") as HTMLInputElement
+    ).value;
+    const final: LoginResult = Object.fromEntries(data);
     await admin.auth().createUser({
       uid,
       email: createEmail(final.stdID),
       displayName: final.stdName,
-      password: req.body.stdIDCard
-    })
+      password: req.body.stdIDCard,
+    });
     await admin.auth().setCustomUserClaims(uid, {
       no: final.stdNo,
-      class: final.stdClass
-    })
+      class: final.stdClass,
+    });
     await req.session.save();
     res.status(200).json({ success: true });
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ success: false });
   }

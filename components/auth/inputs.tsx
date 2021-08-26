@@ -1,5 +1,5 @@
 import { LoginForm } from "@/types/login";
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 type InputProps = {
   register: UseFormRegister<LoginForm>;

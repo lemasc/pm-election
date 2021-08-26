@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
@@ -8,7 +9,6 @@ import { LoginForm } from "@/types/login";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { IDCardInput, IDInput } from "@/components/auth/inputs";
-import Link from "next/link";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 const CAPTCHA_ERROR = "Captcha ไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง";

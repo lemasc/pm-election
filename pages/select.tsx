@@ -5,10 +5,10 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-const ModalComponent = dynamic(() => import("@/components/layout/modal"));
-import Wizard from "@/components/wizard";
 import { Candidate, getCandidates } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
+import Wizard from "@/components/wizard";
+const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 type ServerProps = {
   candidates: Candidate[];

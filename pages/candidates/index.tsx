@@ -2,10 +2,10 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 import { Candidate, getCandidates } from "@/shared/candidates";
 import Layout from "@/components/layout";
-import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 export const getStaticProps: GetStaticProps<{
   candidates: Candidate[];

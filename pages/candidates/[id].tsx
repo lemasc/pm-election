@@ -1,14 +1,6 @@
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
-
-import {
-  CandidateWithContent,
-  getCandidate,
-  getFolders,
-} from "@/shared/candidates";
-import Layout from "@/components/layout";
-import MarkDownComponent from "@/components/markdown";
 import Image from "next/image";
 import {
   AcademicCapIcon,
@@ -17,6 +9,14 @@ import {
   ChatAlt2Icon,
   LightBulbIcon,
 } from "@heroicons/react/outline";
+
+import {
+  CandidateWithContent,
+  getCandidate,
+  getFolders,
+} from "@/shared/candidates";
+import Layout from "@/components/layout";
+import MarkDownComponent from "@/components/markdown";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const folders = await getFolders();
@@ -98,7 +98,7 @@ export default function CandidatePage({
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-auto md:max-w-sm border bg-white gap-6 md:gap-2 rounded p-4 flex-shrink-0 flex md:flex-col items-center justify-center text-center self-start">
+              <figure className="w-full md:w-auto md:max-w-sm border bg-white gap-6 md:gap-2 rounded p-4 flex-shrink-0 flex md:flex-col items-center justify-center text-center self-start">
                 <div>
                   <Image
                     className="rounded-full"
@@ -108,13 +108,13 @@ export default function CandidatePage({
                     height={125}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <figcaption className="flex flex-col gap-2">
                   <span className="font-bold text-lg text-purple-600">
                     คติประจำใจ
                   </span>
                   <blockquote
                     className="relative mx-4 text-gray-800"
-                    style={{ minWidth: "7rem" }}
+                    style={{ minWidth: "8rem" }}
                   >
                     <span className="absolute -top-6 -left-4 text-gray-400 text-4xl">
                       “
@@ -124,8 +124,8 @@ export default function CandidatePage({
                       ”
                     </span>
                   </blockquote>
-                </div>
-              </div>
+                </figcaption>
+              </figure>
             </div>
             <div className="bg-white rounded p-6 border">
               <h3 className="font-bold text-lg text-purple-600 pb-2">
@@ -135,7 +135,9 @@ export default function CandidatePage({
               <div className="content">
                 <ul>
                   {data.abilities.map((d, i) => (
-                    <li key={i}>{d}</li>
+                    <li key={i}>
+                      <div className="content-sublist">{d}</div>
+                    </li>
                   ))}
                 </ul>
               </div>

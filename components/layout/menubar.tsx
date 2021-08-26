@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useWindowWidth } from "@react-hook/window-size/throttled";
 
-import { useAuth } from "@/shared/authContext";
-import { LogoutIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
 
 type MenuBarProps = {
   isSelectApp?: boolean;
@@ -114,10 +113,10 @@ export default function MenuBarComponent({
               leave="transition duration-250 ease-out"
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
-              className="fixed inset-0 mt-20 w-full"
+              className="fixed inset-0 border-t mt-20 w-full"
             >
               <Disclosure.Panel static>
-                <div className="p-6 flex flex-col bg-gray-50 dark:bg-gray-800 rounded-b-lg w-full shadow-lg space-y-5">
+                <div className="p-6 flex flex-col bg-gray-50 dark:bg-gray-800 rounded-b-lg w-full shadow-lg space-y-6">
                   <Pages />
                 </div>
               </Disclosure.Panel>
