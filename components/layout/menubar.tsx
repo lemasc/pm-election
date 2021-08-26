@@ -69,9 +69,7 @@ export default function MenuBarComponent({
                 title="WPM Election System"
                 className="flex flex-row items-center select-none flex-grow"
               >
-                <div className={width >= 375 ? undefined : "hidden"}>
-                  <Image alt="Logo" src="/logo.png" width={50} height={50} />
-                </div>
+                <Image alt="Logo" src="/logo.png" width={50} height={50} />
 
                 <h1 className={"px-4 flex flex-col header-font gap-0.5"}>
                   <span className="text-gray-900 text-lg">

@@ -48,7 +48,9 @@ export async function getCandidate(
   noContent?: boolean
 ): Promise<Candidate | CandidateWithContent | null> {
   try {
-    const data = JSON.parse(await getFile(index, `index.json`)) as Candidate;
+    const file = await getFile(index, `index.json`);
+    if (!file) return null;
+    const data = JSON.parse(file) as CandidateWithContent;
     if (noContent) {
       return {
         index: parseInt(index),

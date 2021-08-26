@@ -66,12 +66,14 @@ export function useProvideAuth(): IAuthContext {
     }
   );
   useEffect(() => {
+    let time;
+    if (time) clearTimeout(time);
     if (_votes !== undefined) {
       setVotes(_votes?.selected ? _votes : null);
     } else {
       setVotes(null);
     }
-    setReady(_votes !== null);
+    setTimeout(() => setReady(_votes !== null), 1000);
   }, [_votes]);
 
   const signIn = async (

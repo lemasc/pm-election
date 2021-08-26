@@ -7,6 +7,8 @@ import { withSession, NextApiSessionRequest, withAuth } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
 import { createSID } from "@/shared/authContext";
+import { Candidate, getCandidate } from "candidates";
+import { noCandidate } from "../select";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
   try {
@@ -25,10 +27,15 @@ async function verifyRecaptcha(req: NextApiSessionRequest) {
 }
 async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
   try {
-    if (!req.token || !req.body.id || !req.body.name || !req.body.token)
+    if (!req.token || !req.body.id || !req.body.token)
       return res.status(400).json({ success: false });
-    // Verify reCapthcha
-    if (!(await verifyRecaptcha(req)))
+
+    // Verify reCapthcha and index
+    const candidate: Candidate | null =
+      req.body.id === "7"
+        ? noCandidate
+        : await getCandidate(req.body.id as string, true);
+    if (!(await verifyRecaptcha(req)) || !candidate)
       return res.status(403).json({ success: false });
     const db = admin.firestore();
     const votesRef = db.collection("votes").doc(req.token.uid);
@@ -36,7 +43,7 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
       return res.status(409).json({ success: false });
     }
     const votes = {
-      name: req.body.name,
+      name: candidate.title + candidate.name + " " + candidate.surname,
       selected: parseInt(req.body.id),
     };
     const profile: LoginResult = {

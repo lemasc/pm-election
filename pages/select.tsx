@@ -28,6 +28,14 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = async () => {
   };
 };
 
+export const noCandidate: Candidate = {
+  index: 7,
+  title: "",
+  name: "ไม่ประสงค์ลงคะแนน",
+  surname: "",
+  class: "-",
+};
+
 function CandidateItem({ data }: { data: Candidate }) {
   return (
     <>
@@ -68,7 +76,6 @@ export default function SelectPage({ candidates: data }: ServerProps) {
         "/api/select",
         new URLSearchParams({
           id: modal.data.index.toString(),
-          name: modal.data.name,
           token,
         }),
         {
@@ -113,16 +120,7 @@ export default function SelectPage({ candidates: data }: ServerProps) {
               }
             >
               {data &&
-                [
-                  ...data,
-                  {
-                    index: 7,
-                    title: "",
-                    name: "ไม่ประสงค์ลงคะแนน",
-                    surname: "",
-                    class: "-",
-                  },
-                ].map((d, i) => (
+                [...data, noCandidate].map((d, i) => (
                   <button
                     style={{ minWidth: 250, minHeight: 150 }}
                     onClick={() => setModal({ show: true, data: d })}

@@ -4,7 +4,7 @@ import Profile from "@/components/profile";
 import { useAuth } from "@/shared/authContext";
 
 export default function ProfilePage() {
-  const { profile: props, signOut, votes } = useAuth();
+  const { profile: props, signOut, votes, ready } = useAuth();
   const router = useRouter();
 
   async function next() {
@@ -17,7 +17,7 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Wizard>
-        {props && (
+        {props && ready && votes !== undefined && (
           <>
             <h2 className="text-2xl">
               {votes ? "ข้อมูลการลงคะแนน" : "ตรวจสอบข้อมูลก่อนการลงคะแนน"}
