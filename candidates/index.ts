@@ -19,9 +19,23 @@ export type Candidate = Pick<
   "index" | "title" | "name" | "surname" | "class"
 >;
 
+/**
+ * From the current issue, API routes could not access the filesystem.
+ * On production at vercel this will fails the whole thing.
+ * For now, use the copy-webpack-plugin to copy files to the lambda-accessible dir.
+ *
+ * See https://github.com/vercel/next.js/issues/8251#issuecomment-854148718
+ */
+function getBasePath() {
+  if (process.env.NODE_ENV === "production") {
+    return path.join(process.cwd(), ".next/server/chunks");
+  }
+  return process.cwd();
+}
+
 async function getFile(...file: string[]): Promise<string> {
   try {
-    return await fs.readFile(path.join(process.cwd(), "candidates", ...file), {
+    return await fs.readFile(path.join(getBasePath(), "candidates", ...file), {
       encoding: "utf-8",
     });
   } catch (err) {
@@ -77,7 +91,7 @@ export async function getCandidates(
 }
 
 export async function getFolders() {
-  return (await fs.readdir(path.join(process.cwd(), "candidates"))).filter(
+  return (await fs.readdir(path.join(getBasePath(), "candidates"))).filter(
     (c) => c != "index.ts"
   );
 }
