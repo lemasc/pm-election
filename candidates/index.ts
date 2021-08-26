@@ -34,9 +34,7 @@ export async function getCandidate(
   noContent?: boolean
 ): Promise<Candidate | CandidateWithContent | null> {
   try {
-    const data = (await import(`./${index}/index.ts`).then(
-      (m) => m.default
-    )) as Candidate;
+    const data = JSON.parse(await getFile(index, `index.json`)) as Candidate;
     if (noContent) {
       return {
         index: parseInt(index),

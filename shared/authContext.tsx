@@ -66,7 +66,6 @@ export function useProvideAuth(): IAuthContext {
     }
   );
   useEffect(() => {
-    console.log(_votes);
     if (_votes !== undefined) {
       setVotes(_votes?.selected ? _votes : null);
     } else {
@@ -141,8 +140,6 @@ export function useProvideAuth(): IAuthContext {
 
     const handleRouteChange = (url: string) => {
       if (authReady) clearTimeout(authReady);
-      console.log(`App is changing to ${url}`);
-      console.log(user);
       if (user !== undefined && user !== null) return;
       authReady = setTimeout(() => {
         if (ready && user === null) {
@@ -153,7 +150,7 @@ export function useProvideAuth(): IAuthContext {
           }
           target !== "" && router.replace(target);
         }
-      }, 1000);
+      }, 2000);
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
