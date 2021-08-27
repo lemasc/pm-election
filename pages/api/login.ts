@@ -1,5 +1,5 @@
 import type { NextApiResponse } from "next";
-import { JSDOM } from "jsdom";
+import parse from "node-html-parser";
 
 import {
   APIRequest,
@@ -52,40 +52,29 @@ async function handler(
       return res.status(403).json({ success: false });
     if ((login.data as string).includes("ไม่พบข้อมูลนักเรียนในระบบ"))
       return res.status(404).json({ success: false });
-    const dom = new JSDOM(login.data.replace(/\t/g, ""));
-    const document = (dom.window as unknown as Window).document;
+    const document = parse(login.data.replace(/\t/g, ""));
     const table = document.querySelectorAll("tr");
-    const data = [];
-    let isEnd = false;
-    table.forEach((row) => {
-      if (isEnd || !row.cells) return;
-      if (row.cells.length !== 2) {
-        isEnd = true;
-        return;
-      }
-      // @ts-ignore: Object is possibly 'null'.
-      const name = fieldNames[row.cells.item(0).textContent];
-      // @ts-ignore: Object is possibly 'null'.
-      let value = row.cells.item(1).textContent as string;
-      if (ignoreFields.includes(name)) {
-        return;
-      }
-      if (name == "stdName") {
-        value = value.replace(/\s+/g, " ");
-      } else if (name == "stdClass") {
-        value = value.replace("มัธยมศึกษาปีที่ ", "");
-      }
-      data.push([name, value]);
-    });
+    const data: Array<string | boolean>[] = table
+      .map((row) => {
+        return row.childNodes
+          .filter((t) => t.innerText.trim() != "")
+          .map((t) =>
+            fieldNames[t.innerText as never]
+              ? fieldNames[t.innerText as never]
+              : t.innerText
+                  .replace("&nbsp;&nbsp;", "")
+                  .replace(/\s+/g, " ")
+                  .replace("มัธยมศึกษาปีที่ ", "")
+          );
+      })
+      .filter(([key]) => !ignoreFields.includes(key));
     if (document.querySelector("input[type='text']")) {
       data.push(["promptID", true]);
     } else {
       data.push(["promptID", false]);
     }
     // Internal UID
-    const uid = (
-      document.querySelector("input[type='hidden']") as HTMLInputElement
-    ).value;
+    const uid = document.querySelector("input[type='hidden']").attributes.value;
     const final: LoginResult = Object.fromEntries(data);
     await admin.auth().createUser({
       uid,

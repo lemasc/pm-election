@@ -110,7 +110,7 @@ export default function HomePage() {
                 <div className="space-y-6 md:space-y-8 justify-around px-4 p-6 pt-1">
                   <TimelineHead>
                     <div className="flex-shrink-0 text-sm">
-                      <TimelineDate date="? ก.ย. 64" />
+                      <TimelineDate date="5 ก.ย. 64" />
                       <TimelineLine />
                     </div>
                     <TimelineData title="เข้าสู่ระบบและตรวจสอบข้อมูลส่วนตัว">
@@ -140,7 +140,7 @@ export default function HomePage() {
                   </TimelineHead>
                   <TimelineHead>
                     <div className="flex-shrink-0 text-sm">
-                      <TimelineDate date="?? ก.ย. 64" time="??:?? น." />
+                      <TimelineDate date="8 ก.ย. 64" time="17:30 น." />
                     </div>
                     <TimelineData title="ประกาศผลการเลือกตั้ง">
                       <p className="text-gray-700 tracking-tight">
@@ -153,7 +153,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="text-sm 2xl:text-base gap-1 flex flex-col items-center md:items-start md:mb-2">
-              <span>ดำเนินการโดย คณะกรรมการนักเรียน ปีการศึกษา 2564</span>
+              <span>ดำเนินการโดย คณะกรรมการนักเรียน ปีการศึกษา 2563</span>
               <span>พัฒนาโดย นายศักดิธัช ธนาสดใส</span>
             </div>
           </Transition>
