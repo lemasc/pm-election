@@ -1,3 +1,5 @@
+const CopyPlugin = require("copy-webpack-plugin")
+
 module.exports = {
   reactStrictMode: true,
   webpack: function (config, { dev, isServer }) {
