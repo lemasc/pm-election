@@ -1,5 +1,5 @@
 import type { NextApiResponse } from "next";
-import { JSDOM } from "jsdom";
+import parse from "node-html-parser";
 
 import {
   APIRequest,
@@ -10,9 +10,6 @@ import {
 import admin from "@/shared/firebase-admin";
 import { createEmail } from "@/shared/authContext";
 import { LoginResult } from "@/types/login";
-import { promises as fs } from "fs";
-import path from "path";
-import parse from "node-html-parser";
 
 const params = ["stdID", "stdIDCard", "captcha"];
 
