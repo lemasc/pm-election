@@ -26,7 +26,15 @@ export type Candidate = Pick<
  *
  * See https://github.com/vercel/next.js/issues/8251#issuecomment-854148718
  */
+
+let isServer = false;
 function getBasePath() {
+  if (isServer && process.env.NETLIFY) {
+    const p = path.resolve("../");
+    fs.readdir(p).then(console.warn);
+    fs.readdir(path.resolve("../../")).then(console.warn);
+    return p;
+  }
   if (process.env.NODE_ENV === "production" && !process.env.NETLIFY) {
     return path.join(process.cwd(), ".next/server/chunks");
   }
@@ -92,8 +100,16 @@ export async function getCandidates(
   }
 }
 
-export async function getFolders() {
-  return (await fs.readdir(path.join(getBasePath(), "candidates"))).filter(
-    (c) => c != "index.ts"
-  );
+export async function getFolders(): Promise<string[]> {
+  try {
+    return (await fs.readdir(path.join(getBasePath(), "candidates"))).filter(
+      (c) => c != "index.ts"
+    );
+  } catch (err) {
+    if (!isServer) {
+      isServer = true;
+      return getFolders();
+    }
+    return [];
+  }
 }
