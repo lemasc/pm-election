@@ -1,12 +1,6 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/router";
-import {
-  browserLocalPersistence,
-  browserSessionPersistence,
-  setPersistence,
-  signInWithEmailAndPassword,
-  User,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, User } from "firebase/auth";
 
 import { auth } from "./firebase";
 import axios, { AxiosResponse } from "axios";
@@ -81,7 +75,6 @@ export function useProvideAuth(): IAuthContext {
     password: string
   ): Promise<FirebaseResult> => {
     try {
-      await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(auth, createEmail(sid), password);
       return { success: true };
     } catch (err) {

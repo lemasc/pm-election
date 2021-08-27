@@ -28,7 +28,7 @@ export type Candidate = Pick<
  */
 function getBasePath() {
   if (process.env.NETLIFY) {
-    return path.resolve("../../");
+    return path.resolve("../");
   }
   if (process.env.NODE_ENV === "production") {
     return path.join(process.cwd(), ".next/server/chunks");
