@@ -19,11 +19,13 @@ function TimelineDate({ date, time }: { date: string; time?: string }) {
   return (
     <div className="flex flex-row w-full sm:flex-col items-center sm:mt-2 sm:pt-3 bg-white sm:w-16 sm:gap-0 gap-2">
       <p className="leading-4">{date}</p>
-      <p className="sm:text-xs text-gray-600">
-        {width <= 1024 && "("}
-        {time}
-        {width <= 1024 && ")"}
-      </p>
+      {time && (
+        <p className="sm:text-xs text-gray-600">
+          {width <= 1024 && "("}
+          {time}
+          {width <= 1024 && ")"}
+        </p>
+      )}
     </div>
   );
 }
@@ -132,7 +134,7 @@ export default function HomePage() {
                         และไม่สามารถแก้ไขได้ในภายหลัง
                       </p>
                       <p className="text-xs sm:text-sm pt-2 text-gray-500">
-                        ระบบจะเปิดให้ลงคะแนนได้ตั้งแต่ 08:30 - 17.00 น.
+                        ระบบจะเปิดให้ลงคะแนนได้ตั้งแต่เวลา 08:30 - 17.00 น.
                       </p>
                     </TimelineData>
                   </TimelineHead>
@@ -142,7 +144,7 @@ export default function HomePage() {
                     </div>
                     <TimelineData title="ประกาศผลการเลือกตั้ง">
                       <p className="text-gray-700 tracking-tight">
-                        ผ่านทางเว็บไซต์การเลือกตั้ง และช่องทางต่าง ๆ
+                        ผ่านเว็บไซต์การเลือกตั้ง และช่องทางต่าง ๆ
                         ของคณะกรรมการนักเรียน
                       </p>
                     </TimelineData>
