@@ -27,7 +27,7 @@ export type Candidate = Pick<
  * See https://github.com/vercel/next.js/issues/8251#issuecomment-854148718
  */
 function getBasePath() {
-  if (process.env.NODE_ENV === "production" && !process.env.NETLFIY) {
+  if (process.env.NODE_ENV === "production" && !process.env.NETLIFY) {
     return path.join(process.cwd(), ".next/server/chunks");
   }
   return process.cwd();
