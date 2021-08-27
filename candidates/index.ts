@@ -29,13 +29,14 @@ export type Candidate = Pick<
 
 let isServer = false;
 function getBasePath() {
-  if (isServer && process.env.NETLIFY) {
+  console.log(process.env.NETLIFY);
+  if (isServer) {
     const p = path.resolve("../");
     fs.readdir(p).then(console.warn);
     fs.readdir(path.resolve("../../")).then(console.warn);
     return p;
   }
-  if (process.env.NODE_ENV === "production" && !process.env.NETLIFY) {
+  if (process.env.NODE_ENV === "production") {
     return path.join(process.cwd(), ".next/server/chunks");
   }
   return process.cwd();
@@ -106,6 +107,7 @@ export async function getFolders(): Promise<string[]> {
       (c) => c != "index.ts"
     );
   } catch (err) {
+    console.error(err);
     if (!isServer) {
       isServer = true;
       return getFolders();
