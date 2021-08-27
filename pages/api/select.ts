@@ -7,7 +7,7 @@ import { withSession, NextApiSessionRequest, withAuth } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
 import { createSID } from "@/shared/authContext";
-import { Candidate, getCandidate } from "candidates";
+import { Candidate, getCandidate } from "@/shared/candidates";
 import { noCandidate } from "../select";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
