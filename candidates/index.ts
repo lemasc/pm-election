@@ -29,7 +29,11 @@ export type Candidate = Pick<
 
 let isNetlify = false;
 function getBasePath() {
-  if (process.env.NODE_ENV === "production" && !isNetlify) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.NETLIFY === undefined &&
+    !isNetlify
+  ) {
     return path.join(process.cwd(), ".next/server/chunks");
   }
   return process.cwd();
