@@ -29,14 +29,10 @@ export type Candidate = Pick<
 
 let isServer = false;
 function getBasePath() {
-  console.log(process.env.NETLIFY);
-  if (isServer) {
-    const p = path.resolve("../");
-    fs.readdir(p).then(console.warn);
-    fs.readdir(path.resolve("../../")).then(console.warn);
-    return p;
-  }
-  if (process.env.NODE_ENV === "production") {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.NETLIFY === undefined
+  ) {
     return path.join(process.cwd(), ".next/server/chunks");
   }
   return process.cwd();
@@ -90,6 +86,7 @@ export async function getCandidates(
 ): Promise<Candidate[] | CandidateWithContent[]> {
   try {
     const folders = await getFolders();
+    console.log(folders);
     return (
       await Promise.all(
         folders.map(async (folder) => await getCandidate(folder, noContent))

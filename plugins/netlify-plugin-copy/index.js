@@ -5,14 +5,14 @@ const fs = require("fs-extra")
  */
 module.exports = {
     onBuild: async () => {
-      console.log(await fs.readdir("./"))
-      const dir = await fs.readdir("./serverless")
-      console.log(dir)
+      console.log("Copying assets to Netlify functions..")
+      const dir = (await fs.readdir("./serverless")).filter(d => d.includes(select))
       await Promise.all(dir.map(async(d) => {
-        if(d.includes("select")) {
           // Copy into this directory
-          console.log(d,await fs.readdir(`./serverless/${d}`))
-        }
+          console.log(`- ${d}`)
+          console.log(await fs.copy(`./candidates`,`./serverless/${d}`))
+          console.log(await fs.readdir(`./serverless/${d}`))
       }))
+      console.log("Copied successfully.")
     },
   }
