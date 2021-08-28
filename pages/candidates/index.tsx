@@ -51,9 +51,7 @@ export default function CandidatesPage({
                     </div>
                     <div className="flex flex-col items-end justify-start">
                       <span>หมายเลข</span>
-                      <span className="text-blue-600 text-2xl font-bold">
-                        {c.index}
-                      </span>
+                      <span className="text-blue-600 text-2xl font-bold">{c.index}</span>
                     </div>
                   </div>
                 </a>
