@@ -27,12 +27,9 @@ export type Candidate = Pick<
  * See https://github.com/vercel/next.js/issues/8251#issuecomment-854148718
  */
 
-let isServer = false;
+let isNetlify = false;
 function getBasePath() {
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.NETLIFY === undefined
-  ) {
+  if (process.env.NODE_ENV === "production" && !isNetlify) {
     return path.join(process.cwd(), ".next/server/chunks");
   }
   return process.cwd();
@@ -105,8 +102,8 @@ export async function getFolders(): Promise<string[]> {
     );
   } catch (err) {
     console.error(err);
-    if (!isServer) {
-      isServer = true;
+    if (!isNetlify) {
+      isNetlify = true;
       return getFolders();
     }
     return [];
