@@ -108,7 +108,7 @@ export async function getFolders(): Promise<string[]> {
     console.error(err);
     if (!isNetlify) {
       isNetlify = true;
-      return getFolders();
+      return await getFolders();
     }
     return [];
   }
