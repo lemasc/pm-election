@@ -1,2 +1,7 @@
+# netlify.toml
+
+[[plugins]]
+package = "/plugins/netlify-plugin-copy"
+
 [functions]
   included_files = ["candidates/*"]
