@@ -11,7 +11,7 @@ module.exports = {
       await Promise.all(dir.map(async(d) => {
         if(d.includes("select")) {
           // Copy into this directory
-          console.log(d,await fs.readdir(`./${d}`))
+          console.log(d,await fs.readdir(`./serverless/${d}`))
         }
       }))
     },
