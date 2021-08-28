@@ -1,6 +1,4 @@
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import Link from "next/link";
-
 import { SSRContext, withSession } from "@/shared/api";
 import { LoginResult } from "@/types/login";
 import Wizard from "@/components/wizard";

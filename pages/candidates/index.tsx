@@ -2,16 +2,16 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { useWindowWidth } from "@react-hook/window-size/throttled";
 
-import { Candidate, getCandidates } from "@/shared/candidates";
+import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import Layout from "@/components/layout";
 
 export const getStaticProps: GetStaticProps<{
   candidates: Candidate[];
 }> = async () => {
   try {
-    const candidates = await getCandidates(true);
+    const db = new CandidateDatabase();
+    const candidates = await db.getCandidates(true);
     return { props: { candidates } };
   } catch (err) {
     return {
@@ -23,7 +23,6 @@ export const getStaticProps: GetStaticProps<{
 export default function CandidatesPage({
   candidates: data,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const width = useWindowWidth();
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Head>
@@ -37,7 +36,7 @@ export default function CandidatesPage({
               <Link key={c.index} href={`/candidates/${c.index}`}>
                 <a className="border rounded bg-white hover:bg-gray-100 shadow max-w-xs">
                   <Image
-                    src={`/candidates/${c.index}.jpg`}
+                    src={`/candidates/${c.index}/${c.index}.jpg`}
                     alt={c.name}
                     width={320}
                     height={320}

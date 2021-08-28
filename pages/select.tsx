@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { Candidate, getCandidates } from "@/shared/candidates";
+import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
@@ -19,8 +19,11 @@ type ModalState = {
   data?: Candidate;
 };
 
-export const getServerSideProps: GetServerSideProps<ServerProps> = async () => {
-  const candidates = await getCandidates(true);
+export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
+  req,
+}) => {
+  const db = new CandidateDatabase(req);
+  const candidates = await db.getCandidates(true);
   return {
     props: {
       candidates,

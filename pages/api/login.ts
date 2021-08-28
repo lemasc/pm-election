@@ -36,6 +36,7 @@ async function handler(
   res: NextApiResponse<APIResponse>
 ) {
   if (req.method !== "POST") return res.status(405).json({ success: false });
+  console.log(req.headers.host);
   try {
     if (!req.body || !checkParameters(req.body))
       return res.status(400).json({ success: false });

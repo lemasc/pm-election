@@ -7,7 +7,7 @@ import { withSession, NextApiSessionRequest, withAuth } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
 import { createSID } from "@/shared/authContext";
-import { Candidate, getCandidate } from "@/shared/candidates";
+import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { noCandidate } from "../select";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
@@ -31,10 +31,11 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
       return res.status(400).json({ success: false });
 
     // Verify reCapthcha and index
+    const cdb = new CandidateDatabase(req);
     const candidate: Candidate | null =
       req.body.id === "7"
         ? noCandidate
-        : await getCandidate(req.body.id as string, true);
+        : await cdb.getCandidate(req.body.id as string, true);
     if (!(await verifyRecaptcha(req)) || !candidate)
       return res.status(403).json({ success: false });
     const db = admin.firestore();

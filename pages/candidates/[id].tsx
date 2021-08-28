@@ -10,16 +10,13 @@ import {
   LightBulbIcon,
 } from "@heroicons/react/outline";
 
-import {
-  CandidateWithContent,
-  getCandidate,
-  getFolders,
-} from "@/shared/candidates";
+import { CandidateDatabase, CandidateWithContent } from "@/shared/candidates";
 import Layout from "@/components/layout";
 import MarkDownComponent from "@/components/markdown";
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const folders = await getFolders();
+  const db = new CandidateDatabase();
+  const folders = await db.getFolders();
   return {
     paths: folders.map((folder) => ({ params: { id: folder } })),
     fallback: false,
@@ -33,7 +30,8 @@ export const getStaticProps: GetStaticProps<{
     return {
       notFound: true,
     };
-  const candidate = (await getCandidate(
+  const db = new CandidateDatabase();
+  const candidate = (await db.getCandidate(
     params.id as string
   )) as CandidateWithContent;
   if (!candidate)
@@ -102,7 +100,7 @@ export default function CandidatePage({
                 <div>
                   <Image
                     className="rounded-full"
-                    src={`/candidates/${data.index}.jpg`}
+                    src={`/candidates/${data.index}/${data.index}.jpg`}
                     alt={data.name}
                     width={125}
                     height={125}
