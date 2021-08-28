@@ -26,11 +26,7 @@ export const appPages: Paths[] = [
   },
 ];
 
-export default function Layout({
-  children,
-}: {
-  children: ReactNode | ReactNodeArray;
-}) {
+export default function Layout({ children }: { children: ReactNode | ReactNodeArray }) {
   const { pathname } = useRouter();
 
   const isSelectApp = appPages.map((p) => "/" + p.page).includes(pathname);

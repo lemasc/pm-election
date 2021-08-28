@@ -31,9 +31,7 @@ export const getStaticProps: GetStaticProps<{
       notFound: true,
     };
   const db = new CandidateDatabase();
-  const candidate = (await db.getCandidate(
-    params.id as string
-  )) as CandidateWithContent;
+  const candidate = (await db.getCandidate(params.id as string)) as CandidateWithContent;
   if (!candidate)
     return {
       notFound: true,
@@ -65,12 +63,8 @@ export default function CandidatePage({
                       {data.title}
                       {data.name} {data.surname}
                     </h2>
-                    <div className=" text-gray-500">
-                      ชั้นมัธยมศึกษาปีที่ {data.class}
-                    </div>
-                    <div className="text-blue-500 font-bold">
-                      ผู้สมัครหมายเลข {data.index}
-                    </div>
+                    <div className=" text-gray-500">ชั้นมัธยมศึกษาปีที่ {data.class}</div>
+                    <div className="text-blue-500 font-bold">ผู้สมัครหมายเลข {data.index}</div>
                   </div>
                 </div>
                 <div className="bg-white rounded p-6 border flex flex-col">
@@ -80,15 +74,11 @@ export default function CandidatePage({
                   </h3>
                   <div className="flex flex-col pt-3 gap-2">
                     {Object.entries(data.education).map(([key, value]) => (
-                      <div
-                        className="flex flex-col md:flex-row gap-1"
-                        key={key}
-                      >
+                      <div className="flex flex-col md:flex-row gap-1" key={key}>
                         <span className="flex-grow break-words">{key}</span>
                         {value !== 0 && (
                           <span className="text-gray-500 font-bold flex-shrink-0">
-                            เกรดเฉลี่ย{" "}
-                            <span className="ml-2">{value.toFixed(2)}</span>
+                            เกรดเฉลี่ย <span className="ml-2">{value.toFixed(2)}</span>
                           </span>
                         )}
                       </div>
@@ -107,20 +97,11 @@ export default function CandidatePage({
                   />
                 </div>
                 <figcaption className="flex flex-col gap-2">
-                  <span className="font-bold text-lg text-purple-600">
-                    คติประจำใจ
-                  </span>
-                  <blockquote
-                    className="relative mx-4 text-gray-800"
-                    style={{ minWidth: "8rem" }}
-                  >
-                    <span className="absolute -top-6 -left-4 text-gray-400 text-4xl">
-                      “
-                    </span>
+                  <span className="font-bold text-lg text-purple-600">คติประจำใจ</span>
+                  <blockquote className="relative mx-4 text-gray-800" style={{ minWidth: "8rem" }}>
+                    <span className="absolute -top-6 -left-4 text-gray-400 text-4xl">“</span>
                     {data.motto}
-                    <span className="absolute -top-6 -right-4 text-gray-400 text-4xl">
-                      ”
-                    </span>
+                    <span className="absolute -top-6 -right-4 text-gray-400 text-4xl">”</span>
                   </blockquote>
                 </figcaption>
               </figure>

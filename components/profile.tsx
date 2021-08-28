@@ -12,11 +12,7 @@ export default function Profile(props: LoginResult) {
       <b>เลขที่: </b>
       <span>{props.stdNo}</span>
       <b>สถานะ: </b>
-      <span
-        className={
-          "font-bold " + (!props.votes ? "text-red-500" : "text-green-700")
-        }
-      >
+      <span className={"font-bold " + (!props.votes ? "text-red-500" : "text-green-700")}>
         {!props.votes ? "ยังไม่ได้ลงคะแนน" : "ลงคะแนนแล้ว"}
       </span>
       {props.votes && (

@@ -52,10 +52,7 @@ export default function ModalComponent({
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="inline-block h-screen align-middle"
-            aria-hidden="true"
-          >
+          <span className="inline-block h-screen align-middle" aria-hidden="true">
             &#8203;
           </span>
           <Transition.Child
@@ -77,18 +74,14 @@ export default function ModalComponent({
             >
               <Dialog.Title
                 as="h3"
-                className={
-                  "flex flex-row px-6 py-4 text-lg leading-6 " + titleClass
-                }
+                className={"flex flex-row px-6 py-4 text-lg leading-6 " + titleClass}
               >
                 <div className="flex flex-grow">{title}</div>
                 <button
                   title="ปิด"
                   className={
                     `focus:outline-none ${
-                      titleClass && titleClass.includes("bg-blue")
-                        ? "text-white"
-                        : "text-gray-800"
+                      titleClass && titleClass.includes("bg-blue") ? "text-white" : "text-gray-800"
                     }` + (!closable ? " hidden" : "")
                   }
                   onClick={() => closable && onClose()}

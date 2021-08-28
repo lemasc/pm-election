@@ -4,11 +4,7 @@ import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 import { Components } from "react-markdown/src/ast-to-react";
 
-export default function MarkDownComponent({
-  content,
-}: {
-  content: string;
-}): JSX.Element {
+export default function MarkDownComponent({ content }: { content: string }): JSX.Element {
   const components: Components = {
     li: ({ node, ordered, children, ...props }) => (
       <li {...props}>
@@ -28,11 +24,7 @@ export default function MarkDownComponent({
     },
   };
   return (
-    <ReactMarkdown
-      className="content"
-      components={components}
-      remarkPlugins={[gfm]}
-    >
+    <ReactMarkdown className="content" components={components} remarkPlugins={[gfm]}>
       {content}
     </ReactMarkdown>
   );

@@ -8,11 +8,7 @@ export default function Footer() {
     <footer className="flex justify-center items-center border p-8 w-full text-gray-500 text-sm bg-white">
       <button
         onClick={async () => {
-          if (
-            confirm(
-              "คุณต้องการออกจากระบบการลงคะแนนหรือไม่? การดำเนินการทั้งหมดจะถูกละทิ้ง"
-            )
-          ) {
+          if (confirm("คุณต้องการออกจากระบบการลงคะแนนหรือไม่? การดำเนินการทั้งหมดจะถูกละทิ้ง")) {
             await signOut();
             router.replace("/api/logout");
           }

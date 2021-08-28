@@ -7,9 +7,7 @@ import { useAuth } from "@/shared/authContext";
 import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = withSession<LoginResult>(
-  async (
-    context: SSRContext
-  ): Promise<GetServerSidePropsResult<LoginResult>> => {
+  async (context: SSRContext): Promise<GetServerSidePropsResult<LoginResult>> => {
     const data: LoginResult | undefined = context.req.session.get("profile");
     context.req.session.destroy();
     await context.req.session.save();
@@ -36,9 +34,7 @@ export default function SuccessPage(props: LoginResult) {
         <h2 className="text-2xl">ลงคะแนนเรียบร้อยแล้ว!</h2>
         <Profile {...props} />
 
-        <b className="font-bold text-apple-600">
-          กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐานในการลงคะแนน
-        </b>
+        <b className="font-bold text-apple-600">กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐานในการลงคะแนน</b>
         <button
           onClick={() => {
             signOut();

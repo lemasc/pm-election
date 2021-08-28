@@ -1,12 +1,7 @@
 import type { NextApiResponse } from "next";
 import parse from "node-html-parser";
 
-import {
-  APIRequest,
-  withSession,
-  NextApiSessionRequest,
-  APIResponse,
-} from "@/shared/api";
+import { APIRequest, withSession, NextApiSessionRequest, APIResponse } from "@/shared/api";
 import admin from "@/shared/firebase-admin";
 import { createEmail } from "@/shared/authContext";
 import { LoginResult } from "@/types/login";
@@ -17,8 +12,7 @@ function checkParameters(body: string[]) {
   const keys = Object.keys(body);
   return (
     keys.length === params.length &&
-    keys.map((k) => params.includes(k)).filter((v) => v).length ===
-      params.length
+    keys.map((k) => params.includes(k)).filter((v) => v).length === params.length
   );
 }
 const fieldNames = {
@@ -31,15 +25,11 @@ const fieldNames = {
 };
 const ignoreFields = ["stdIDCard", "term"];
 
-async function handler(
-  req: NextApiSessionRequest,
-  res: NextApiResponse<APIResponse>
-) {
+async function handler(req: NextApiSessionRequest, res: NextApiResponse<APIResponse>) {
   if (req.method !== "POST") return res.status(405).json({ success: false });
   console.log(req.headers.host);
   try {
-    if (!req.body || !checkParameters(req.body))
-      return res.status(400).json({ success: false });
+    if (!req.body || !checkParameters(req.body)) return res.status(400).json({ success: false });
     const api = new APIRequest(req);
     const form = new URLSearchParams();
     Object.entries(req.body).map(([key, value]) => {

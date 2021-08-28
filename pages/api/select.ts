@@ -33,9 +33,7 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
     // Verify reCapthcha and index
     const cdb = new CandidateDatabase(req);
     const candidate: Candidate | null =
-      req.body.id === "7"
-        ? noCandidate
-        : await cdb.getCandidate(req.body.id as string, true);
+      req.body.id === "7" ? noCandidate : await cdb.getCandidate(req.body.id as string, true);
     if (!(await verifyRecaptcha(req)) || !candidate)
       return res.status(403).json({ success: false });
     const db = admin.firestore();

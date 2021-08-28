@@ -8,12 +8,9 @@ import HeaderComponent from "@/components/layout/header";
 import MarkDownComponent from "@/components/markdown";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const content = await fs.readFile(
-    path.join(process.cwd(), "/docs/privacy.md"),
-    {
-      encoding: "utf-8",
-    }
-  );
+  const content = await fs.readFile(path.join(process.cwd(), "/docs/privacy.md"), {
+    encoding: "utf-8",
+  });
   return {
     props: {
       content,

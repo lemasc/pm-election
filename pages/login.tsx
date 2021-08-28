@@ -12,8 +12,7 @@ import { IDCardInput, IDInput } from "@/components/auth/inputs";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 const CAPTCHA_ERROR = "Captcha ไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง";
-const CREDENTIALS_ERROR =
-  "ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลที่กรอกให้ถูกต้อง";
+const CREDENTIALS_ERROR = "ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลที่กรอกให้ถูกต้อง";
 
 export default function LoginPage() {
   const { signIn, signInNative } = useAuth();
@@ -73,10 +72,7 @@ export default function LoginPage() {
           setError(CREDENTIALS_ERROR);
           break;
         default:
-          setError(
-            "ไม่สามารถเข้าสู่ระบบได้ เนื่องจาก " +
-              result.message.replace("auth/", "")
-          );
+          setError("ไม่สามารถเข้าสู่ระบบได้ เนื่องจาก " + result.message.replace("auth/", ""));
       }
     } else {
       router.replace("/profile");
@@ -106,14 +102,10 @@ export default function LoginPage() {
       <Wizard>
         <h2 className="text-2xl">เข้าสู่ระบบ</h2>
         {Object.values(errors).length > 0 && (
-          <span className="text-red-500 font-bold">
-            {Object.values(errors)[0].message}
-          </span>
+          <span className="text-red-500 font-bold">{Object.values(errors)[0].message}</span>
         )}
         {error && error != CAPTCHA_ERROR && (
-          <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">
-            {error}
-          </span>
+          <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">{error}</span>
         )}
         <form className="flex flex-col gap-8" onSubmit={handleSubmit(_signIn)}>
           <div className="sm:grid sm:grid-cols-2 flex flex-col gap-4 text-left items-center">
@@ -143,15 +135,11 @@ export default function LoginPage() {
         <span className="text-sm text-gray-500">
           การใช้งานระบบเลือกตั้งนี้ ถือว่าคุณได้ยอมรับ{" "}
           <Link href="/terms">
-            <a className="underline text-blue-600 hover:text-blue-700">
-              ข้อตกลงการใช้งาน
-            </a>
+            <a className="underline text-blue-600 hover:text-blue-700">ข้อตกลงการใช้งาน</a>
           </Link>{" "}
           และ{" "}
           <Link href="/privacy">
-            <a className="underline text-blue-600 hover:text-blue-700">
-              นโยบายความเป็นส่วนตัว
-            </a>
+            <a className="underline text-blue-600 hover:text-blue-700">นโยบายความเป็นส่วนตัว</a>
           </Link>{" "}
           แล้ว
         </span>
@@ -174,8 +162,7 @@ export default function LoginPage() {
             <div className="flex flex-col gap-4 items-center">
               <img
                 className={
-                  "border rounded " +
-                  (captcha ? "opacity-50 cursor-wait" : "cursor-pointer")
+                  "border rounded " + (captcha ? "opacity-50 cursor-wait" : "cursor-pointer")
                 }
                 width={180}
                 height={60}

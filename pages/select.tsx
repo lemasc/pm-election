@@ -19,9 +19,7 @@ type ModalState = {
   data?: Candidate;
 };
 
-export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
-  req,
-}) => {
+export const getServerSideProps: GetServerSideProps<ServerProps> = async ({ req }) => {
   const db = new CandidateDatabase(req);
   const candidates = await db.getCandidates(true);
   return {
@@ -55,9 +53,7 @@ function CandidateItem({ data }: { data: Candidate }) {
       </div>
       <div className="flex flex-shrink-0 flex-col space-y-1 items-end font-bold">
         <span>หมายเลข</span>
-        <b className={"text-3xl text-blue-500"}>
-          {data.index === 7 ? "-" : data.index}
-        </b>
+        <b className={"text-3xl text-blue-500"}>{data.index === 7 ? "-" : data.index}</b>
       </div>
     </>
   );
@@ -105,22 +101,16 @@ export default function SelectPage({ candidates: data }: ServerProps) {
               <span className="text-red-500">{props.stdName}</span>
             </div>
             <span className="text-gray-500 text-sm leading-6 sarabun-font">
-              กรุณาลงคะแนนให้ผู้สมัครที่ต้องการ
-              เมื่อลงคะแนนแล้วจะไม่สามารถแก้ไขได้อีก
+              กรุณาลงคะแนนให้ผู้สมัครที่ต้องการ เมื่อลงคะแนนแล้วจะไม่สามารถแก้ไขได้อีก
               <br />
-              หากเกิดข้อผิดพลาดใด ๆ
-              กรุณาแจ้งคณะกรรมการนักเรียนเพื่อดำเนินการแก้ไขต่อไป
+              หากเกิดข้อผิดพลาดใด ๆ กรุณาแจ้งคณะกรรมการนักเรียนเพื่อดำเนินการแก้ไขต่อไป
             </span>
 
             {errorText && (
-              <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">
-                {errorText}
-              </span>
+              <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">{errorText}</span>
             )}
             <div
-              className={
-                "items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"
-              }
+              className={"items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"}
             >
               {data &&
                 [...data, noCandidate].map((d, i) => (
@@ -137,17 +127,13 @@ export default function SelectPage({ candidates: data }: ServerProps) {
                       <CandidateItem data={d} />
                     </div>
                     <div className="flex w-full flex-col items-start space-y-1 text-left">
-                      <span className={"text-apple-500" + " font-bold"}>
-                        คลิกเพื่อลงคะแนน
-                      </span>
+                      <span className={"text-apple-500" + " font-bold"}>คลิกเพื่อลงคะแนน</span>
                     </div>
                   </button>
                 ))}
             </div>
             {data && data.length === 0 && (
-              <div className="flex items-center justify-center h-32 w-full">
-                ไม่มีข้อมูล
-              </div>
+              <div className="flex items-center justify-center h-32 w-full">ไม่มีข้อมูล</div>
             )}
             <ModalComponent
               closable={true}

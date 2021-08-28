@@ -50,9 +50,7 @@ function Pages(): JSX.Element | null {
   );
 }
 
-export default function MenuBarComponent({
-  isSelectApp,
-}: MenuBarProps): JSX.Element {
+export default function MenuBarComponent({ isSelectApp }: MenuBarProps): JSX.Element {
   const width = useWindowWidth({ fps: 60 });
   return (
     <>
@@ -72,9 +70,7 @@ export default function MenuBarComponent({
                 <Image alt="Logo" src="/logo.png" width={50} height={50} />
 
                 <h1 className={"px-4 flex flex-col header-font gap-0.5"}>
-                  <span className="text-gray-900 text-lg">
-                    ระบบเลือกตั้งประธานนักเรียน
-                  </span>
+                  <span className="text-gray-900 text-lg">ระบบเลือกตั้งประธานนักเรียน</span>
                   <span className="text-xs font-light text-gray-500">
                     โรงเรียนมัธยมสาธิตวัดพระศรีมหาธาตุ
                   </span>
@@ -86,11 +82,7 @@ export default function MenuBarComponent({
                 </div>
               )}
               {!isSelectApp && width < 640 && (
-                <div
-                  className={
-                    "flex-row absolute top-0 right-0 p-6 space-x-4 sm:hidden flex"
-                  }
-                >
+                <div className={"flex-row absolute top-0 right-0 p-6 space-x-4 sm:hidden flex"}>
                   {/* Mobile menu button*/}
                   <Disclosure.Button className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-gray-600 focus:outline-none">
                     <span className="sr-only hidden">Open main menu</span>
