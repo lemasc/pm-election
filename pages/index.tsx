@@ -62,7 +62,7 @@ export default function HomePage() {
   const width = useWindowWidth();
 
   function go(location: string) {
-    if (width > 768) {
+    if (width > 768 && background && aside) {
       setRedirect(location);
     } else {
       router.push(location);
@@ -154,7 +154,7 @@ export default function HomePage() {
             </div>
             <div className="text-sm 2xl:text-base gap-1 flex flex-col items-center md:items-start md:mb-2">
               <span>ดำเนินการโดย คณะกรรมการนักเรียน ปีการศึกษา 2563</span>
-              <span>พัฒนาโดย นายศักดิธัช ธนาสดใส</span>
+              <span>พัฒนาเว็บโดย นายศักดิธัช ธนาสดใส</span>
             </div>
           </Transition>
         </Transition>

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -8,7 +9,6 @@ import { LoginForm } from "@/types/login";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { IDCardInput, IDInput } from "@/components/auth/inputs";
-import Image from "next/image";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 const CAPTCHA_ERROR = "Captcha ไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง";
@@ -172,7 +172,7 @@ export default function LoginPage() {
               <span className="text-red-600 font-bold">{CAPTCHA_ERROR}</span>
             )}
             <div className="flex flex-col gap-4 items-center">
-              <Image
+              <img
                 className={
                   "border rounded " +
                   (captcha ? "opacity-50 cursor-wait" : "cursor-pointer")
@@ -203,12 +203,14 @@ export default function LoginPage() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
+                disabled={captcha}
                 onClick={() => showPrompt(false)}
                 className="px-4 py-2 btn bg-gray-200 from-gray-200 to-gray-300 ring-gray-300"
               >
                 ยกเลิก
               </button>
               <button
+                disabled={captcha}
                 onClick={() => submitPrompt()}
                 type="submit"
                 className="px-4 py-2 btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
