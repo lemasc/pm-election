@@ -34,4 +34,4 @@ yarn-error.log*
 .vercel
 
 # candidates index
-public/candidates/index.json
+public/data/*.json

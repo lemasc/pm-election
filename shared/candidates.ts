@@ -22,12 +22,16 @@ export type Candidate = Pick<
 >;
 
 export class CandidateDatabase {
+  private indexFile = "path.json";
+  private location = "data";
   private server: boolean;
   private serverUrl: string = "";
   /**
-   * Candidate database used in both SSG and SSR.
-   * In SSG, data will be readed directly from the filesystem and the indexes will be created.
+   * The candidate database instance used in both SSG and SSR.
+   *
+   * In SSG, data will be readed directly from the file-system and the indexes are created.
    * In SSR, uses the indexes created from SSG and fetch using HTTP.
+   *
    */
   constructor(req?: IncomingMessage) {
     if (req) {
@@ -40,53 +44,64 @@ export class CandidateDatabase {
       this.server = false;
     }
   }
-  getBasePath() {
-    return path.join(process.cwd(), "public");
+  private getDataPath() {
+    return path.join(process.cwd(), "public", this.location);
   }
-  async getFile(...file: string[]): Promise<string> {
+  private async getFile(...file: string[]): Promise<string> {
     try {
       if (this.server) {
         let _file = await axios
-          .get("/" + path.join("candidates", ...file), {
+          .get("/" + path.join(this.location, ...file), {
             responseType: "text",
             baseURL: this.serverUrl,
+            // Axios parse JSON automatically, but for this we don't want this so.
+            // See https://stackoverflow.com/a/41015885
             transformResponse: [],
           })
           .then((d) => d.data);
         return _file;
       }
-      return await fs.readFile(
-        path.join(this.getBasePath(), "candidates", ...file),
-        {
-          encoding: "utf-8",
-        }
-      );
+      return await fs.readFile(path.join(this.getDataPath(), ...file), {
+        encoding: "utf-8",
+      });
     } catch (err) {
       console.error(err);
       return "";
     }
   }
+  async needsReindex(indexFile: string): Promise<boolean> {
+    // Always reindex on development.
+    if (process.env.NODE_ENV == "development") return true;
+    try {
+      // If file exists, no need to reindex.
+      await fs.access(indexFile, constants.R_OK);
+      return false;
+    } catch (err) {
+      // If file not exists, reindex anyway.
+      if (err.code == "ENOENT") return true;
+      return false;
+    }
+  }
   async getFolders(): Promise<string[]> {
     try {
       if (this.server) {
-        const folders = await this.getFile("index.json");
-        return JSON.parse(folders);
-      } else {
-        const folders = (
-          await fs.readdir(path.join(this.getBasePath(), "candidates"))
-        ).filter((c) => c != "index.json");
-        const indexFile = path.join(
-          this.getBasePath(),
-          "candidates",
-          "index.json"
-        );
-        if (fs.access(indexFile, constants.W_OK)) {
-          await fs.writeFile(indexFile, JSON.stringify(folders), {
-            encoding: "utf-8",
-          });
-        }
-        return folders;
+        const folders = await this.getFile(this.indexFile);
+        // In production, functions have no access to the file-system. Return as is.
+        // See https://github.com/vercel/next.js/issues/8251
+        if (process.env.NODE_ENV == "production") return JSON.parse(folders);
       }
+      const folders = (await fs.readdir(this.getDataPath())).filter(
+        (c) => c != this.indexFile
+      );
+      const indexFile = path.join(this.getDataPath(), this.indexFile);
+      if (this.needsReindex(indexFile)) {
+        // Well, we don't need to write this everytime the users browse.
+        // Just create if it doesn't exists then.
+        await fs.writeFile(indexFile, JSON.stringify(folders), {
+          encoding: "utf-8",
+        });
+      }
+      return folders;
     } catch (err) {
       return [];
     }

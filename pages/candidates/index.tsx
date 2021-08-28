@@ -36,7 +36,7 @@ export default function CandidatesPage({
               <Link key={c.index} href={`/candidates/${c.index}`}>
                 <a className="border rounded bg-white hover:bg-gray-100 shadow max-w-xs">
                   <Image
-                    src={`/candidates/${c.index}/${c.index}.jpg`}
+                    src={`/data/${c.index}/${c.index}.jpg`}
                     alt={c.name}
                     width={320}
                     height={320}

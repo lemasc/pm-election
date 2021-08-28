@@ -100,7 +100,7 @@ export default function CandidatePage({
                 <div>
                   <Image
                     className="rounded-full"
-                    src={`/candidates/${data.index}/${data.index}.jpg`}
+                    src={`/data/${data.index}/${data.index}.jpg`}
                     alt={data.name}
                     width={125}
                     height={125}
