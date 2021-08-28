@@ -100,6 +100,7 @@ export async function getCandidates(
 }
 
 export async function getFolders(): Promise<string[]> {
+  console.log("isNetlify", isNetlify);
   try {
     return (await fs.readdir(path.join(getBasePath(), "candidates"))).filter(
       (c) => c != "index.ts"
