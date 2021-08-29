@@ -168,6 +168,7 @@ export default function HomePage() {
             </span>
             <div className="flex flex-col gap-4 py-4">
               <button
+                title="เข้าสู่ระบบการลงคะแนน"
                 onClick={() => go("/login")}
                 className="btn-large btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
               >
@@ -178,6 +179,7 @@ export default function HomePage() {
                 </div>
               </button>
               <button
+                title="ข้อมูลผู้ลงสมัครรับเลือกตั้ง"
                 onClick={() => go("/candidates")}
                 className="btn-large btn bg-blue-500 from-blue-500 to-blue-600 ring-blue-500 text-white"
               >
@@ -185,6 +187,7 @@ export default function HomePage() {
                 <span>ข้อมูลผู้ลงสมัครรับเลือกตั้ง</span>
               </button>
               <a
+                title="รายงานปัญหา"
                 href="https://docs.google.com/forms/d/e/1FAIpQLSejSg8HOvxdABmJ-qzct6YUBx0t_y9TrjztuEFhqIzkqYq7eA/viewform?usp=sf_link"
                 target="_blank"
                 rel="noreferrer noopener"
@@ -196,6 +199,7 @@ export default function HomePage() {
             </div>
           </div>
           <a
+            title="Instagram คณะกรรมการนักเรียน (@coolkidssatit)"
             href="https://www.instagram.com/coolkidssatit/"
             target="_blank"
             rel="noreferrer noopener"

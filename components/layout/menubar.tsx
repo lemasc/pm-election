@@ -58,7 +58,7 @@ function Pages(): JSX.Element | null {
           </a>
         </Link>
       ))}
-      {adminNavigation && (
+      {router.pathname.includes("/admin") && (
         <button
           title="ออกจากระบบ"
           className="text-sm text-left hover:text-gray-600"
