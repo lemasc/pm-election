@@ -8,7 +8,7 @@ import { LoginResult } from "@/types/login";
 
 const params = ["stdID", "stdIDCard", "captcha"];
 
-function checkParameters(body: string[]) {
+export function checkParameters(body: string[], params: string[]) {
   const keys = Object.keys(body);
   return (
     keys.length === params.length &&
@@ -23,13 +23,15 @@ const fieldNames = {
   "ชื่อ-นามสกุล": "stdName",
   ระดับชั้นปัจจุบัน: "stdClass",
 };
+
 const ignoreFields = ["stdIDCard", "term"];
 
 async function handler(req: NextApiSessionRequest, res: NextApiResponse<APIResponse>) {
   if (req.method !== "POST") return res.status(405).json({ success: false });
   console.log(req.headers.host);
   try {
-    if (!req.body || !checkParameters(req.body)) return res.status(400).json({ success: false });
+    if (!req.body || !checkParameters(req.body, params))
+      return res.status(400).json({ success: false });
     const api = new APIRequest(req);
     const form = new URLSearchParams();
     Object.entries(req.body).map(([key, value]) => {
@@ -53,7 +55,7 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse<APIRespo
             fieldNames[t.innerText as never]
               ? fieldNames[t.innerText as never]
               : t.innerText
-                  .replace("&nbsp;&nbsp;", "")
+                  .replace("&nbsp;&nbsp;", " ")
                   .replace(/\s+/g, " ")
                   .replace("มัธยมศึกษาปีที่ ", "")
           );

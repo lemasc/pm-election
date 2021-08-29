@@ -24,68 +24,66 @@ export type SSRContext = GetServerSidePropsContext & {
   req: GetServerSidePropsContext["req"] & { session: Session };
 };
 
-type SSRHandler<P> = (
-  context: SSRContext
-) => Promise<GetServerSidePropsResult<P>>;
+type SSRHandler<P> = (context: SSRContext) => Promise<GetServerSidePropsResult<P>>;
 
 export type NextApiSessionRequest = NextApiRequest & {
   session: Session;
-  token?: CustomServerToken
+  token?: CustomServerToken;
 };
 
 export type SignInResponse = {
   /** A Firebase Auth ID token for the authenticated user. */
-  idToken: string
+  idToken: string;
   /** The email for the authenticated user. */
-  email: string
+  email: string;
   /** A Firebase Auth refresh token for the authenticated user. */
-  refreshToken: string
+  refreshToken: string;
   /** The number of seconds in which the ID token expires. */
-  expiresIn: string
+  expiresIn: string;
   /** The uid of the authenticated user.*/
-  localId: string
+  localId: string;
   /** Whether the email is for an existing account.*/
-  registered: boolean
-}
+  registered: boolean;
+};
 
 /**
  * Mock FirebaseAuth API class Error.
  */
- export class FirebaseAuthError extends Error {
-   /**
-    * The HTTP status code recieved from API
-    */
-   readonly status: number
+export class FirebaseAuthError extends Error {
+  /**
+   * The HTTP status code recieved from API
+   */
+  readonly status: number;
   /**
    * The backend error code associated with this error.
    */
-  readonly code: string
+  readonly code: string;
   /**
    * A custom error description.
    */
-  readonly message: string
+  readonly message: string;
   /**
    * Converts the API error code into the Firebase JS SDK compatible error codes.
    */
   private generateCode(code: string) {
-    let _code: string
+    let _code: string;
     switch (code) {
-      case 'EMAIL_NOT_FOUND':
-        _code = 'invalid-email'
-        break
-      case 'INVALID_PASSWORD':
-        _code = 'wrong-password'
-        break
+      case "EMAIL_NOT_FOUND":
+        _code = "invalid-email";
+        break;
+      case "INVALID_PASSWORD":
+        _code = "wrong-password";
+        break;
       default:
-        _code = code.toLowerCase().split('_').join('-')
+        _code = code.toLowerCase().split("_").join("-");
     }
-    return 'auth/' + _code
+    return "auth/" + _code;
   }
-  constructor({code, status}: {code: string, status: number}) {
-    super(code)
-    this.message = code
-    this.code = this.generateCode(code)
-    this.status = status
+  constructor({ code, status }: { code: string; status: number }) {
+    super(code);
+    this.message = code;
+    this.code = this.generateCode(code);
+    this.status = status;
   }
 }
 
@@ -102,7 +100,7 @@ export const signInPromise = (sid: string, password: string) => {
   return new Promise<SignInResponse>((resolve, reject) =>
     axios
       .post<SignInResponse>(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword',
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
         {
           email: createEmail(sid),
           password,
@@ -117,32 +115,31 @@ export const signInPromise = (sid: string, password: string) => {
       .then((d) => resolve(d.data))
       .catch((e) => {
         if (e.response) {
-          const response = e.response as AxiosResponse
-          const error = (e.response as AxiosResponse).data.error
-          reject(new FirebaseAuthError({code: error.message, status: response.status}))
+          const response = e.response as AxiosResponse;
+          const error = (e.response as AxiosResponse).data.error;
+          reject(new FirebaseAuthError({ code: error.message, status: response.status }));
         } else {
-          console.error(e)
-          reject(e)
-          reject(new FirebaseAuthError({code:'network-request-failed', status: 500}))
+          console.error(e);
+          reject(e);
+          reject(new FirebaseAuthError({ code: "network-request-failed", status: 500 }));
         }
       })
-  )
-}
-
+  );
+};
 
 export const sessionOptions = {
   password: process.env.SESSION_PASSWORD as string,
   cookieName: "election",
-  ttl: (60 * 15) + 60,
+  ttl: 60 * 15 + 60,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
-    maxage: -1
+    maxage: -1,
   },
 };
 
-export function withSession<
-  P extends { [key: string]: any } = { [key: string]: any }
->(handler: Handler<NextApiRequest, NextApiResponse> | SSRHandler<P>) {
+export function withSession<P extends { [key: string]: any } = { [key: string]: any }>(
+  handler: Handler<NextApiRequest, NextApiResponse> | SSRHandler<P>
+) {
   return withIronSession(handler, sessionOptions);
 }
 
@@ -195,10 +192,7 @@ export class APIRequest {
     this.saveCookie(response.config.jar);
     return response;
   }
-  async get<T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<T>> {
+  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     const response = await axios.get<T>(url, this.formatConfig(config));
     this.saveCookie(response.config.jar);
     return response;
@@ -214,28 +208,27 @@ export class APIRequest {
   }
 }
 
-
 /**
  * withAuth API wrapper function.
  *
  * Protect API routes by verifying the Firebase ID tokens recieved from the Authorization header.
  */
- export function withAuth(handler: NextApiHandler) {
+export function withAuth(handler: NextApiHandler) {
   return async (req: NextApiSessionRequest, res: NextApiResponse<APIResponse>): Promise<void> => {
-    const authHeader = req.headers.authorization
+    const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ success: false })
+      return res.status(401).json({ success: false });
     }
-    const auth = admin.auth()
-    const token = authHeader.split(' ')[1]
+    const auth = admin.auth();
+    const token = authHeader.split(" ")[1];
     try {
-      const decodedToken = await auth.verifyIdToken(token, true)
-      if (!decodedToken || !decodedToken.uid) return res.status(401).json({ success: false })
-      req.token = decodedToken as CustomServerToken
+      const decodedToken = await auth.verifyIdToken(token, true);
+      if (!decodedToken || !decodedToken.uid) return res.status(401).json({ success: false });
+      req.token = decodedToken as CustomServerToken;
     } catch (error) {
-      console.error(error)
-      return res.status(500).json({ success: false })
+      console.error(error);
+      return res.status(500).json({ success: false });
     }
-    return handler(req, res)
-  }
+    return handler(req, res);
+  };
 }

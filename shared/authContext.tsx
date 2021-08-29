@@ -52,13 +52,10 @@ export function useProvideAuth(): IAuthContext {
   const [profile, setProfile] = useState<LoginResult | undefined>(undefined);
   const [ready, setReady] = useState<boolean>(false);
   const [votes, setVotes] = useState<VotesData | null>(null);
-  const { data: _votes } = useDocument<VotesData>(
-    user ? `/votes/${user.uid}` : null,
-    {
-      listen: true,
-      parseDates: ["timestamp"],
-    }
-  );
+  const { data: _votes } = useDocument<VotesData>(user ? `/votes/${user.uid}` : null, {
+    listen: true,
+    parseDates: ["timestamp"],
+  });
   useEffect(() => {
     let time;
     if (time) clearTimeout(time);
@@ -70,10 +67,7 @@ export function useProvideAuth(): IAuthContext {
     setTimeout(() => setReady(_votes !== null), 1000);
   }, [_votes]);
 
-  const signIn = async (
-    sid: string,
-    password: string
-  ): Promise<FirebaseResult> => {
+  const signIn = async (sid: string, password: string): Promise<FirebaseResult> => {
     try {
       await signInWithEmailAndPassword(auth, createEmail(sid), password);
       return { success: true };
@@ -111,8 +105,7 @@ export function useProvideAuth(): IAuthContext {
     return auth.onIdTokenChanged(async (curUser) => {
       if (!_isMounted) return;
       if (curUser) {
-        const claims: CustomToken = (await curUser.getIdTokenResult())
-          .claims as CustomToken;
+        const claims: CustomToken = (await curUser.getIdTokenResult()).claims as CustomToken;
         setProfile({
           stdID: createSID(curUser.email as string),
           stdName: curUser.displayName as string,
@@ -138,8 +131,8 @@ export function useProvideAuth(): IAuthContext {
       if (user !== undefined && user !== null) return;
       authReady = setTimeout(() => {
         if (ready && user === null) {
-          if (url.includes("/admin") && url !== "/admin") {
-            target = "/admin";
+          if (url.includes("/admin")) {
+            return;
           } else if (authPages.includes(url)) {
             target = "/";
           }

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { useAuth } from "@/shared/authContext";
 
 type MenuBarProps = {
   isSelectApp?: boolean;
@@ -31,21 +32,44 @@ const navigation: Navigation[] = [
   },
 ];
 
+const adminNavigation: Navigation[] = [
+  {
+    href: "/admin/dashboard",
+    title: "แผงควบคุม",
+  },
+  {
+    href: "/admin/votes",
+    title: "การลงคะแนน",
+  },
+];
 function Pages(): JSX.Element | null {
+  const { signOut } = useAuth();
   const router = useRouter();
   return (
     <>
-      {navigation.map((n) => (
+      {(router.pathname.includes("/admin") ? adminNavigation : navigation).map((n) => (
         <Link key={n.title} href={n.href}>
           <a
             title={n.title}
-            className="cursor-pointer rounded-lg h-full text-sm hover:text-gray-600"
+            className="cursor-pointer h-full text-sm hover:text-gray-600"
             aria-current={n.href == router.pathname ? "page" : undefined}
           >
             {n.title}
           </a>
         </Link>
       ))}
+      {adminNavigation && (
+        <button
+          title="ออกจากระบบ"
+          className="text-sm text-left hover:text-gray-600"
+          onClick={() => {
+            signOut();
+            router.replace("/api/logout");
+          }}
+        >
+          ออกจากระบบ
+        </button>
+      )}
     </>
   );
 }
@@ -76,13 +100,13 @@ export default function MenuBarComponent({ isSelectApp }: MenuBarProps): JSX.Ele
                   </span>
                 </h1>
               </div>
-              {width >= 640 && !isSelectApp && (
-                <div className="flex flex-row space-x-8">
+              {!isSelectApp && (
+                <div className="hidden sm:flex flex-row space-x-8">
                   <Pages />
                 </div>
               )}
-              {!isSelectApp && width < 640 && (
-                <div className={"flex-row absolute top-0 right-0 p-6 space-x-4 sm:hidden flex"}>
+              {!isSelectApp && (
+                <div className={"flex flex-row absolute top-0 right-0 p-6 space-x-4 sm:hidden"}>
                   {/* Mobile menu button*/}
                   <Disclosure.Button className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-gray-600 focus:outline-none">
                     <span className="sr-only hidden">Open main menu</span>

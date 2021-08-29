@@ -134,11 +134,11 @@ export default function LoginPage() {
         </form>
         <span className="text-sm text-gray-500">
           การใช้งานระบบเลือกตั้งนี้ ถือว่าคุณได้ยอมรับ{" "}
-          <Link href="/terms">
+          <Link href="/terms" prefetch={false}>
             <a className="underline text-blue-600 hover:text-blue-700">ข้อตกลงการใช้งาน</a>
           </Link>{" "}
           และ{" "}
-          <Link href="/privacy">
+          <Link href="/privacy" prefetch={false}>
             <a className="underline text-blue-600 hover:text-blue-700">นโยบายความเป็นส่วนตัว</a>
           </Link>{" "}
           แล้ว

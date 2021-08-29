@@ -9,6 +9,7 @@ import { LoginResult } from "@/types/login";
 import { createSID } from "@/shared/authContext";
 import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { noCandidate } from "../select";
+import { checkParameters } from "./login";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
   try {
@@ -27,7 +28,7 @@ async function verifyRecaptcha(req: NextApiSessionRequest) {
 }
 async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
   try {
-    if (!req.token || !req.body.id || !req.body.token)
+    if (!req.token || !checkParameters(req.body, ["id", "token"]))
       return res.status(400).json({ success: false });
 
     // Verify reCapthcha and index
