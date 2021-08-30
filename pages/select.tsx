@@ -8,6 +8,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
+import { withConfig } from "@/shared/api/config";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 type ServerProps = {
@@ -19,7 +20,7 @@ type ModalState = {
   data?: Candidate;
 };
 
-export const getServerSideProps: GetServerSideProps<ServerProps> = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(async ({ req }) => {
   const db = new CandidateDatabase(req);
   const candidates = await db.getCandidates(true);
   return {
@@ -27,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = async ({ req 
       candidates,
     },
   };
-};
+});
 
 export const noCandidate: Candidate = {
   index: 7,

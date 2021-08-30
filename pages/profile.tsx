@@ -2,6 +2,9 @@ import { useRouter } from "next/router";
 import Wizard from "@/components/wizard";
 import Profile from "@/components/profile";
 import { useAuth } from "@/shared/authContext";
+import { withConfig } from "@/shared/api/config";
+
+export const getServerSideProps = withConfig();
 
 export default function ProfilePage() {
   const { profile: props, signOut, votes, ready } = useAuth();

@@ -1,14 +1,14 @@
-import type { NextApiResponse } from "next";
-import { withSession, NextApiSessionRequest, withAuth } from "@/shared/api";
+import { withAPISession } from "@/shared/api/session";
+import { withAuth } from "@/shared/api";
 
-async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
-  if (req.token && !req.token.admin) {
-    return res.status(403).send({ success: false });
-  }
-  req.session.destroy();
-  req.session.set("admin", true);
-  await req.session.save();
-  return res.status(200).send({ success: true });
-}
-
-export default withAuth(withSession(handler));
+export default withAuth(
+  withAPISession(async (req, res) => {
+    if (req.token && !req.token.admin) {
+      return res.status(403).send({ success: false });
+    }
+    req.session.destroy();
+    req.session.set("admin", true);
+    await req.session.save();
+    return res.status(200).send({ success: true });
+  })
+);

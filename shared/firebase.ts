@@ -1,7 +1,7 @@
-import { Fuego } from 'swr-firestore-v9'
-import { initializeApp, getApps, getApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { Fuego } from "swr-firestore-v9";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,10 +12,10 @@ export const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-}
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
-const auth = getAuth(app)
-const db = getFirestore(app)
+};
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-const fuego = new Fuego(firebaseConfig)
-export { auth, db, app, fuego }
+const fuego = new Fuego(firebaseConfig);
+export { auth, db, app, fuego };

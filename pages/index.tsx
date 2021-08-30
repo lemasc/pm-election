@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -7,6 +7,9 @@ import { ClockIcon, LoginIcon, UserIcon, FlagIcon } from "@heroicons/react/outli
 import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 import logo from "../public/logo.png";
+
+import { GetServerSideProps } from "next";
+import { getServerConfig, ServerConfig } from "@/shared/api/config";
 
 type TimelineProps = { children: JSX.Element | JSX.Element[] };
 
@@ -52,10 +55,16 @@ function TimelineData({
   );
 }
 
-export default function HomePage() {
+type PageProps = {
+  config: ServerConfig;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  return { props: { config: await getServerConfig() } };
+};
+
+export default function HomePage({ config }: PageProps) {
   const router = useRouter();
-  const [focus, setFocus] = useState(false);
-  const [hover, setHover] = useState(false);
   const [redirect, setRedirect] = useState("");
   const [background, showBackground] = useState(true);
   const [aside, showAside] = useState(false);
@@ -68,6 +77,10 @@ export default function HomePage() {
       router.push(location);
     }
   }
+
+  useEffect(() => {
+    console.log(config);
+  }, [config]);
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
@@ -150,7 +163,7 @@ export default function HomePage() {
             </div>
             <div className="text-sm 2xl:text-base gap-1 flex flex-col items-center md:items-start md:mb-2">
               <span>ดำเนินการโดย คณะกรรมการนักเรียน ปีการศึกษา 2563</span>
-              <span>พัฒนาเว็บโดย นายศักดิธัช ธนาสดใส</span>
+              <span>พัฒนาเว็บไซต์โดย นายศักดิธัช ธนาสดใส</span>
             </div>
           </Transition>
         </Transition>
@@ -168,14 +181,17 @@ export default function HomePage() {
             </span>
             <div className="flex flex-col gap-4 py-4">
               <button
-                title="เข้าสู่ระบบการลงคะแนน"
+                disabled={!config.canRegister}
+                title={config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
                 onClick={() => go("/login")}
                 className="btn-large btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
               >
                 <LoginIcon className="h-10 w-10" transform="scale(-1,1)" />
                 <div className="flex flex-col gap-0.5">
                   <b className="font-medium text-xl">เริ่มต้นใช้งาน</b>
-                  <span className="font-light text-sm">เข้าสู่ระบบการลงคะแนน</span>
+                  <span className="font-light text-sm">
+                    {config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
+                  </span>
                 </div>
               </button>
               <button

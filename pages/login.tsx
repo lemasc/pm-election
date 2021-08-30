@@ -9,10 +9,13 @@ import { LoginForm } from "@/types/login";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { IDCardInput, IDInput } from "@/components/auth/inputs";
+import { withConfig } from "@/shared/api/config";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 const CAPTCHA_ERROR = "Captcha ไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง";
 const CREDENTIALS_ERROR = "ไม่สามารถเข้าสู่ระบบได้ กรุณาตรวจสอบข้อมูลที่กรอกให้ถูกต้อง";
+
+export const getServerSideProps = withConfig();
 
 export default function LoginPage() {
   const { signIn, signInNative } = useAuth();

@@ -37,9 +37,7 @@ export class CandidateDatabase {
     if (req) {
       this.server = true;
       this.serverUrl =
-        (req.headers.host?.includes("localhost") ? "http" : "https") +
-        "://" +
-        req.headers.host;
+        (req.headers.host?.includes("localhost") ? "http" : "https") + "://" + req.headers.host;
     } else {
       this.server = false;
     }
@@ -90,9 +88,7 @@ export class CandidateDatabase {
         // See https://github.com/vercel/next.js/issues/8251
         if (process.env.NODE_ENV == "production") return JSON.parse(folders);
       }
-      const folders = (await fs.readdir(this.getDataPath())).filter(
-        (c) => c != this.indexFile
-      );
+      const folders = (await fs.readdir(this.getDataPath())).filter((c) => c != this.indexFile);
       const indexFile = path.join(this.getDataPath(), this.indexFile);
       if (this.needsReindex(indexFile)) {
         // Well, we don't need to write this everytime the users browse.
@@ -106,17 +102,11 @@ export class CandidateDatabase {
       return [];
     }
   }
-  async getCandidates(
-    noContent?: boolean
-  ): Promise<Candidate[] | CandidateWithContent[]> {
+  async getCandidates(noContent?: boolean): Promise<Candidate[] | CandidateWithContent[]> {
     try {
       const folders = await this.getFolders();
       return (
-        await Promise.all(
-          folders.map(
-            async (folder) => await this.getCandidate(folder, noContent)
-          )
-        )
+        await Promise.all(folders.map(async (folder) => await this.getCandidate(folder, noContent)))
       ).filter((c) => c !== null) as Candidate[];
     } catch (err) {
       console.error(err);

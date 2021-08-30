@@ -1,7 +1,8 @@
+import { APIRequest } from "@/shared/api/request";
+import { NextApiSessionRequest, withAPISession } from "@/shared/api/session";
 import type { NextApiResponse } from "next";
-import { APIRequest, withSession, NextApiSessionRequest } from "@/shared/api";
 
-async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
+export default withAPISession(async (req: NextApiSessionRequest, res: NextApiResponse) => {
   try {
     const api = new APIRequest(req);
     const image = await api.get("/assets/function/AntiBotCaptcha/draw/abc.php?" + Math.random(), {
@@ -14,6 +15,4 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
     console.error(err);
     res.status(500).json({ success: false });
   }
-}
-
-export default withSession(handler);
+});

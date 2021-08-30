@@ -1,7 +1,5 @@
 import Head from "next/head";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-import LayoutComponent from "@/components/layout";
 import Logo from "../../public/logo.png";
 import { IDInput, IDCardInput } from "@/components/auth/inputs";
 import { useForm } from "react-hook-form";

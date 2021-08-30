@@ -9,7 +9,7 @@ import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
 import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { SSRContext, withSession } from "@/shared/api";
+import { SSRContext, withSession } from "@/shared/api/session";
 
 dayjs.locale(th);
 dayjs.extend(localizedFormat);

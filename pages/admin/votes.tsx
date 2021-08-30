@@ -14,7 +14,7 @@ import axios from "axios";
 import { useAuth } from "@/shared/authContext";
 import Loader from "react-loader-spinner";
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import { SSRContext, withSession } from "@/shared/api";
+import { SSRContext, withSession } from "@/shared/api/session";
 
 dayjs.locale(th);
 dayjs.extend(localizedFormat);
@@ -48,7 +48,7 @@ export default function AdminVotesPage() {
   const { user } = useAuth();
   const [fetching, setfetching] = useState(false);
   const [result, setResult] = useState<ExportResult>({ data: [] });
-  const { register, handleSubmit, watch } = useForm<VotesSearch>();
+  const { register, handleSubmit, watch, setValue } = useForm<VotesSearch>();
   async function onSubmit(form: VotesSearch) {
     if (!user || fetching) return;
     try {
@@ -69,9 +69,12 @@ export default function AdminVotesPage() {
       setfetching(false);
     }
   }
+
   useEffect(() => {
-    console.log(result);
-  }, [result]);
+    if (watch("class") >= 4 && watch("room") == 4) {
+      setValue("room", 1);
+    }
+  }, [setValue, watch]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Head>
@@ -88,7 +91,7 @@ export default function AdminVotesPage() {
             className="flex flex-col sm:flex-row flex-grow gap-6 items-center"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex flex-col flex-grow gap-1">
+            <div className="flex flex-col flex-grow gap-1 text-center sm:text-left">
               <h2 className="text-xl flex-grow">เรียกดูข้อมูล</h2>
               {!fetching && result.data.length > 0 && (
                 <span className="text-sm text-gray-500">
@@ -158,7 +161,7 @@ export default function AdminVotesPage() {
                       <th>ชื่อ-นามสกุล</th>
                       <th className="hidden sm:table-cell">ระดับชั้น</th>
                       <th>เลขที่</th>
-                      <th className="hidden md:table-cell">สถานะบัญชี</th>
+                      <th>สถานะบัญชี</th>
                       <th>สถานะการลงคะแนน</th>
                     </tr>
                   </thead>
@@ -171,11 +174,7 @@ export default function AdminVotesPage() {
                           ม. {`${result.class}/${result.room}`}
                         </td>
                         <td>{i + 1}</td>
-                        <td
-                          className={`hidden md:table-cell italic ${
-                            acc ? "text-green-500" : "text-red-500"
-                          }`}
-                        >
+                        <td className={`italic ${acc ? "text-green-500" : "text-red-500"}`}>
                           {acc ? "ลงทะเบียนแล้ว" : "ยังไม่ได้ลงทะเบียน"}
                         </td>
                         <td

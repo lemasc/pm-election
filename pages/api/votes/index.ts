@@ -1,7 +1,7 @@
-import type { NextApiResponse } from "next";
 import parse from "node-html-parser";
 
-import { APIRequest, withSession, NextApiSessionRequest, withAuth } from "@/shared/api";
+import { withAPISession } from "@/shared/api/session";
+import { APIRequest } from "@/shared/api/request";
 import admin from "@/shared/firebase-admin";
 import { createEmail } from "@/shared/authContext";
 import { checkParameters } from "../login";
@@ -13,7 +13,7 @@ type StudentExportList = {
   vote?: boolean;
 };
 
-async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
+export default withAPISession(async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ success: false });
   try {
     if (!req.body || !checkParameters(req.body, ["class", "room"]))
@@ -74,6 +74,4 @@ async function handler(req: NextApiSessionRequest, res: NextApiResponse) {
     console.error(err);
     res.status(500).json({ success: false });
   }
-}
-
-export default withSession(handler);
+});

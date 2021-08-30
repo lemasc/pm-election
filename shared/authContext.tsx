@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/router";
 import { signInWithEmailAndPassword, User } from "firebase/auth";
+import { fetchAndActivate, getRemoteConfig, getValue } from "firebase/remote-config";
 
-import { auth } from "./firebase";
+import { auth, app } from "./firebase";
 import axios, { AxiosResponse } from "axios";
 import { CustomToken, LoginForm, LoginResult, VotesData } from "@/types/login";
 import { useDocument } from "swr-firestore-v9";
@@ -10,6 +11,11 @@ import { useDocument } from "swr-firestore-v9";
 type FirebaseResult = {
   success: boolean;
   message?: string;
+};
+
+type Config = {
+  maintenance: boolean;
+  test_mode: boolean;
 };
 
 /**
@@ -32,6 +38,7 @@ interface IAuthContext {
   ready: boolean;
   votes: VotesData | null | undefined;
   profile: LoginResult | undefined;
+  config: Config;
   signIn: (sid: string, password: string) => Promise<FirebaseResult>;
   signInNative: (data: LoginForm) => Promise<FirebaseResult>;
   signOut: () => Promise<void>;
@@ -48,8 +55,13 @@ export const useAuth = (): IAuthContext => {
 // Provider hook that creates auth object and handles state
 export function useProvideAuth(): IAuthContext {
   const router = useRouter();
+  const [config, setConfig] = useState<Config>({
+    maintenance: false,
+    test_mode: false,
+  });
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<LoginResult | undefined>(undefined);
+
   const [ready, setReady] = useState<boolean>(false);
   const [votes, setVotes] = useState<VotesData | null>(null);
   const { data: _votes } = useDocument<VotesData>(user ? `/votes/${user.uid}` : null, {
@@ -148,8 +160,24 @@ export function useProvideAuth(): IAuthContext {
     };
   }, [ready, router, user]);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const config = getRemoteConfig(app);
+        await fetchAndActivate(config);
+        setConfig({
+          test_mode: getValue(config, "test_mode").asBoolean(),
+          maintenance: getValue(config, "maintenance").asBoolean(),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
   return {
     user,
+    config,
     votes,
     profile,
     ready,

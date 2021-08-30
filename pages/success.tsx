@@ -1,29 +1,27 @@
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import { SSRContext, withSession } from "@/shared/api";
+import { SSRContext, withSession } from "@/shared/api/session";
 import { LoginResult } from "@/types/login";
 import Wizard from "@/components/wizard";
 import Profile from "@/components/profile";
 import { useAuth } from "@/shared/authContext";
 import { useRouter } from "next/router";
 
-export const getServerSideProps: GetServerSideProps = withSession<LoginResult>(
-  async (context: SSRContext): Promise<GetServerSidePropsResult<LoginResult>> => {
-    const data: LoginResult | undefined = context.req.session.get("profile");
-    context.req.session.destroy();
-    await context.req.session.save();
-    if (!data || !data.votes) {
-      return {
-        redirect: {
-          destination: "/",
-          permanent: true,
-        },
-      };
-    }
+export const getServerSideProps: GetServerSideProps = withSession(async (context) => {
+  const data: LoginResult | undefined = context.req.session.get("profile");
+  context.req.session.destroy();
+  await context.req.session.save();
+  if (!data || !data.votes) {
     return {
-      props: data,
+      redirect: {
+        destination: "/",
+        permanent: true,
+      },
     };
   }
-);
+  return {
+    props: data,
+  };
+});
 
 export default function SuccessPage(props: LoginResult) {
   const { signOut } = useAuth();

@@ -37,7 +37,7 @@ body {
 
 .btn {
   @apply focus:bg-gradient-to-b hover:bg-gradient-to-b focus:outline-none dark:focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-4;
-  @apply disabled:bg-gray-200 disabled:text-gray-500 disabled:from-gray-200 disabled:to-gray-200 disabled:cursor-not-allowed;
+  @apply disabled:bg-gray-200 disabled:text-gray-500 disabled:from-gray-200 disabled:to-gray-200 disabled:cursor-not-allowed disabled:border-gray-300 disabled:border;
 }
 .btn:not(.btn-large) {
   @apply rounded-md;
