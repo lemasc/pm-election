@@ -2,7 +2,7 @@ import { LoginResult } from "@/types/login";
 
 export default function Profile(props: LoginResult) {
   return (
-    <div className="p-8 bg-gray-200 grid grid-cols-2 rounded max-w-3xl text-left gap-2 sarabun-font">
+    <div className="p-8 bg-gray-200 flex flex-col items-center justify-center sm:grid sm:grid-cols-2 rounded max-w-3xl text-left gap-2 sarabun-font">
       <b>เลขประจำตัว:</b>
       <span>{props.stdID}</span>
       <b>ชื่อ:</b>

@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { SSRContext, withSession } from "@/shared/api/session";
+import { getServerConfig, ServerConfig } from "@/shared/api/config";
 
 dayjs.locale(th);
 dayjs.extend(localizedFormat);
@@ -53,13 +54,16 @@ export const getServerSideProps: GetServerSideProps = withSession(
         },
       };
     }
+    const config = await getServerConfig();
     return {
-      props: {},
+      props: {
+        config,
+      },
     };
   }
 );
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage({ config }: { config: ServerConfig }) {
   const width = useWindowWidth({ initialWidth: 768 });
   const [notVoted, setNotVoted] = useState<number | undefined>(undefined);
   const { data } = useDocument<Summary>("/votes/summary", {
@@ -67,7 +71,6 @@ export default function AdminDashboardPage() {
     //refreshInterval: 6000 * 2,
   });
   useEffect(() => {
-    console.log(data);
     if (data) {
       const votes = Object.entries(data).reduce((cur, [key, value]) => {
         if (typeof value === "number" && key !== "users") {
@@ -95,14 +98,24 @@ export default function AdminDashboardPage() {
               อัพเดทข้อมูลอัตโนมัติทุก 2 นาที
             </span>
           </div>
-          <div className="text-red-500 text-2xl flex justify-end items-end flex-col sarabun-font font-bold">
+          <div
+            className={`${
+              config.inTime || config.canRegister ? "text-green-600" : "text-red-500"
+            } text-2xl flex justify-end items-end flex-col sarabun-font font-bold`}
+          >
             <span className="text-sm text-gray-600 dark:text-gray-300 kanot-font font-normal py-1.5">
               สถานะของระบบเลือกตั้ง
             </span>
-            ปิดใช้งาน
-            <span className="text-xs text-gray-400 kanot-font font-normal py-1.5">
-              ยังไม่ถึงเวลาลงคะแนน
-            </span>
+            {config.inTime
+              ? "เปิดการลงคะแนน"
+              : config.canRegister
+              ? "เปิดการลงทะเบียน"
+              : "ปิดการลงคะแนน"}
+            {(config.maintenance || config.testMode) && (
+              <span className="text-xs text-gray-400 kanot-font font-normal py-1.5">
+                {config.testMode ? "อยู่ในโหมดทดสอบ" : "อยู่ระหว่างการปรับปรุง"}
+              </span>
+            )}
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg border shadow">

@@ -9,7 +9,7 @@ import { useWindowWidth } from "@react-hook/window-size/throttled";
 import logo from "../public/logo.png";
 
 import { GetServerSideProps } from "next";
-import { getServerConfig, ServerConfig } from "@/shared/api/config";
+import { ConfigPageProps, getServerConfig } from "@/shared/api/config";
 
 type TimelineProps = { children: JSX.Element | JSX.Element[] };
 
@@ -55,15 +55,11 @@ function TimelineData({
   );
 }
 
-type PageProps = {
-  config: ServerConfig;
-};
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<ConfigPageProps> = async () => {
   return { props: { config: await getServerConfig() } };
 };
 
-export default function HomePage({ config }: PageProps) {
+export default function HomePage({ config }: ConfigPageProps) {
   const router = useRouter();
   const [redirect, setRedirect] = useState("");
   const [background, showBackground] = useState(true);
@@ -77,10 +73,6 @@ export default function HomePage({ config }: PageProps) {
       router.push(location);
     }
   }
-
-  useEffect(() => {
-    console.log(config);
-  }, [config]);
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">

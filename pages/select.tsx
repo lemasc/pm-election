@@ -68,10 +68,10 @@ export default function SelectPage({ candidates: data }: ServerProps) {
   const [fetching, setFetch] = useState(false);
   async function select() {
     if (!modal.data || !modal.data.index) return;
-    const token = await recaptchaRef.current?.executeAsync();
-    if (!token) return;
     try {
       setFetch(true);
+      const token = await recaptchaRef.current?.executeAsync();
+      if (!token) return;
       await axios.post(
         "/api/select",
         new URLSearchParams({

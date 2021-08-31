@@ -14,32 +14,40 @@ export type ServerConfig = {
   inTime: boolean;
   canRegister: boolean;
   maintenance: boolean;
+  testMode: boolean;
+};
+
+export type ConfigPageProps = {
+  config: ServerConfig;
 };
 
 export async function getServerConfig(): Promise<ServerConfig> {
   const date = dayjs().tz("Asia/Bangkok");
   const t = await admin.remoteConfig().getTemplate();
   function getParam(key: string) {
-    console.log(t.parameters[key].defaultValue);
     return t.parameters[key] && t.parameters[key].defaultValue
       ? JSON.parse((t.parameters[key].defaultValue as any).value)
       : false;
   }
-  const test_mode = !getParam("test_mode") && date.isBefore("2021-09-05");
+  function testMode(key: string) {
+    return getParam("test_mode")
+      ? getParam("test_mode")[key] && date.isBefore("2021-09-05")
+      : false;
+  }
   return {
     serverTime: date.add(1, "minute").valueOf(),
-    canRegister: date.isBetween("2021-09-05", "2021-09-08 17:00:00") || test_mode,
-    inTime: date.isBetween("2021-09-08 08:30:00", "2021-08-08 17:00:00") || test_mode,
+    canRegister: date.isBetween("2021-09-05", "2021-09-08 17:00:00") || testMode("canRegister"),
+    inTime: date.isBetween("2021-09-08 08:30:00", "2021-09-08 17:00:00") || testMode("inTime"),
     maintenance: getParam("maintenance"),
+    testMode: testMode("canRegister") || testMode("inTime"),
   };
 }
 
-export function withConfig<P extends { [key: string]: any } = { [key: string]: any }>(
-  handler?: GetServerSideProps<P>
-) {
+export function withConfig<P = any>(handler?: GetServerSideProps<P>) {
   return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
     const config = await getServerConfig();
-    if (!config.canRegister) {
+
+    if (!config.canRegister || (!config.inTime && ctx.req.url?.includes("/select"))) {
       return {
         redirect: {
           destination: "/",
@@ -57,6 +65,13 @@ export function withConfig<P extends { [key: string]: any } = { [key: string]: a
     }
     if (handler) {
       return await handler(ctx);
+    }
+    if (ctx.req.url?.includes("/profile")) {
+      return {
+        props: {
+          config,
+        },
+      };
     }
     return {
       props: {},

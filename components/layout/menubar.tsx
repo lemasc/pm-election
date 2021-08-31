@@ -27,7 +27,7 @@ const navigation: Navigation[] = [
     title: "ผู้ลงสมัคร",
   },
   {
-    href: "/instuctions",
+    href: "/instructions",
     title: "ขั้นตอนการใช้งาน",
   },
 ];

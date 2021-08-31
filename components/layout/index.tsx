@@ -37,7 +37,7 @@ export default function Layout({ children }: { children: ReactNode | ReactNodeAr
         className={`mt-20 flex flex-1 ${
           isSelectApp
             ? "md:flex-row md:items-start md:gap-2 justify-center items-center px-2 text-center gap-8"
-            : "md:px-20 px-8 gap-4 pb-20"
+            : "md:px-20 px-8 gap-6 pb-20"
         } flex-col py-8 bg-gray-50 w-full`}
       >
         {children}
