@@ -82,6 +82,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
     } else {
       setNotVoted(undefined);
     }
+    console.log(data);
   }, [data]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
@@ -141,7 +142,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
                   color={i === 6 ? "text-blue-500" : undefined}
                   show={data !== undefined}
                   title={i === 6 ? "ไม่ประสงค์ลงคะแนน" : "หมายเลข " + (i + 1)}
-                  value={data && data[i] ? data[i] : 0}
+                  value={data && data[i + 1] ? data[i + 1] : 0}
                   key={i + 1}
                 />
               );

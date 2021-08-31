@@ -33,10 +33,13 @@ export default function InstructionsPage() {
             </li>
             <li>
               <div className="content-sublist flex flex-col space-y-2">
-                <span>ป้อนรหัสประจำตัวนักเรียนและเลขประจำตัวประชาชนเพื่อเข้าสู่ระบบ</span>
-                <b className="text-red-500">
-                  หากเป็นการลงทะเบียนครั้งแรก ระบบจะแสดง Captcha สำหรับยืนยันตัวตน
-                </b>
+                <p>
+                  <span>ป้อนรหัสประจำตัวนักเรียนและเลขประจำตัวประชาชนเพื่อเข้าสู่ระบบ</span>
+                  <br />
+                  <b className="text-red-500">
+                    หากเป็นการลงทะเบียนครั้งแรก ระบบจะแสดง Captcha สำหรับยืนยันตัวตน
+                  </b>
+                </p>
                 <div className="border">
                   <Image
                     src={login}
@@ -47,9 +50,13 @@ export default function InstructionsPage() {
             </li>
             <li>
               <div className="content-sublist flex flex-col space-y-2">
-                <span>
-                  ระบบจะแสดงข้อมูลของนักเรียน ให้ตรวจสอบข้อมูลอย่างละเอียดว่าถูกต้องครบถ้วน
-                </span>
+                <p>
+                  <span>ระบบจะแสดงข้อมูลของนักเรียน ให้ตรวจสอบอย่างละเอียดว่าถูกต้องครบถ้วน</span>
+                  <br />
+                  <span className="text-red-500 font-bold">
+                    หากไม่ถูกต้องหรือไม่สามารถเข้าสู่ระบบได้ ให้แจ้งคณะกรรมการนักเรียน
+                  </span>
+                </p>
                 <div className="border">
                   <Image
                     src={profile}
@@ -91,7 +98,7 @@ export default function InstructionsPage() {
                 <div className="border">
                   <Image
                     src={modal}
-                    alt="ป้อนรหัสประจำตัวนักเรียนและเลขประจำตัวประชาชนเพื่อเข้าสู่ระบบ"
+                    alt="ตรวจสอบข้อมูลผู้ลงสมัครก่อนการลงคะแนน แล้วกดปุ่มลงคะแนน"
                   />
                 </div>
               </div>
@@ -102,7 +109,7 @@ export default function InstructionsPage() {
                 <div className="border">
                   <Image
                     src={success}
-                    alt="ป้อนรหัสประจำตัวนักเรียนและเลขประจำตัวประชาชนเพื่อเข้าสู่ระบบ"
+                    alt="หากระบบบันทึกข้อมูลเรียบร้อยจะแสดงข้อมูลการลงคะแนน เป็นอันเสร็จสิ้น"
                   />
                 </div>
               </div>
