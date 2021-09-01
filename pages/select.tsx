@@ -42,9 +42,12 @@ function CandidateItem({ data }: { data: Candidate }) {
   return (
     <>
       <div className="flex flex-col space-y-2 pr-2 text-sm flex-grow items-start text-left">
-        <h3 className="text-xl font-bold mr-8">
-          {data.title}
-          {data.name} {data.surname}
+        <h3 className="text-xl font-bold mr-8 flex flex-row flex-wrap gap-1">
+          <span>
+            {data.title}
+            {data.name}
+          </span>
+          <span>{data.surname}</span>
         </h3>
         <span className="font-medium text-blue-500">
           {data.class !== "-"
@@ -142,12 +145,12 @@ export default function SelectPage({ candidates: data }: ServerProps) {
               show={modal.show}
               title="รายละเอียดผู้ลงสมัคร"
               size="max-w-lg"
-              titleClass="bg-yellow-300 text-gray-900 bg-opacity-80 font-bold sarabun-font"
+              titleClass="bg-yellow-300 text-gray-900 bg-opacity-80 font-bold"
             >
-              <div className="p-4 flex flex-row h-24 sarabun-font items-center">
+              <div className="p-4 flex flex-row items-center">
                 {modal.data && <CandidateItem data={modal.data} />}
               </div>
-              <div className="flex flex-col space-y-2 border-t py-4 my-2 items-center text-center sarabun-font">
+              <div className="flex flex-col space-y-2 border-t p-4 my-2 items-center text-center">
                 {modal.data && (
                   <h3 className="text-lg font-bold">
                     {modal.data.index !== 7
