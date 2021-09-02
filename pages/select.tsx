@@ -9,6 +9,7 @@ import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { withConfig } from "@/shared/api/config";
+import { withSession } from "@/shared/api/session";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 type ServerProps = {
@@ -20,15 +21,27 @@ type ModalState = {
   data?: Candidate;
 };
 
-export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(async ({ req }) => {
-  const db = new CandidateDatabase(req);
-  const candidates = await db.getCandidates(true);
-  return {
-    props: {
-      candidates,
-    },
-  };
-});
+export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(
+  withSession(async ({ req }) => {
+    const data = req.session.get("profile");
+    if (data) {
+      // Profile session will only set if user was selected.
+      return {
+        redirect: {
+          destination: "/",
+          permanent: true,
+        },
+      };
+    }
+    const db = new CandidateDatabase(req);
+    const candidates = await db.getCandidates(true);
+    return {
+      props: {
+        candidates,
+      },
+    };
+  })
+);
 
 export const noCandidate: Candidate = {
   index: 7,

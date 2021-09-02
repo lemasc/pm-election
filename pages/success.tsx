@@ -1,5 +1,5 @@
-import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import { SSRContext, withSession } from "@/shared/api/session";
+import { GetServerSideProps } from "next";
+import { withSession } from "@/shared/api/session";
 import { LoginResult } from "@/types/login";
 import Wizard from "@/components/wizard";
 import Profile from "@/components/profile";
@@ -8,8 +8,6 @@ import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = withSession(async (context) => {
   const data: LoginResult | undefined = context.req.session.get("profile");
-  context.req.session.destroy();
-  await context.req.session.save();
   if (!data || !data.votes) {
     return {
       redirect: {
