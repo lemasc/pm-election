@@ -151,7 +151,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
               color="text-red-500"
               show={notVoted !== undefined}
               title="ยังไม่ได้ลงคะแนน"
-              value={notVoted}
+              value={notVoted ? notVoted : 0}
             />
           </div>
         </div>

@@ -94,9 +94,26 @@ export default function AdminVotesPage() {
             <div className="flex flex-col flex-grow gap-1 text-center sm:text-left">
               <h2 className="text-xl flex-grow">เรียกดูข้อมูล</h2>
               {!fetching && result.data.length > 0 && (
-                <span className="text-sm text-gray-500">
-                  แสดงผลทั้งหมด {result.data.length} รายการ
-                </span>
+                <>
+                  <span className="text-sm text-gray-500">
+                    แสดงผลทั้งหมด {result.data.length} รายการ
+                  </span>
+                  <Link
+                    prefetch={false}
+                    href={{
+                      pathname: "/api/votes/export",
+                      query: { class: result.class, room: result.room },
+                    }}
+                  >
+                    <a
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="underline text-sm text-center sm:text-left text-blue-600"
+                    >
+                      ส่งออกเป็น PDF
+                    </a>
+                  </Link>
+                </>
               )}
             </div>
             <div className="flex flex-row flex-wrap gap-4 justify-center">
