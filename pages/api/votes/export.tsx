@@ -23,22 +23,22 @@ import dayjs, { Dayjs } from "dayjs";
 import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { exportVotes, StudentExportList } from ".";
-import { withAuth } from "@/shared/api";
+
 dayjs.locale(th);
 dayjs.extend(localizedFormat);
 
 Font.register({
-  family: "THSarabunNew",
+  family: "Sarabun",
   fonts: [
     {
-      src: "https://fonts.gstatic.com/s/sarabun/v8/DtVjJx26TKEr37c9aAFJmg.ttf",
+      src: "https://fonts.gstatic.com/s/sarabun/v8/DtVmJx26TKEr37c9YNpoik8s7g.ttf",
     },
     /*  {
       src: "https://fonts.gstatic.com/s/sarabun/v8/DtVkJx26TKEr37c9aBBxbl8c_SjW.ttf",
       fontStyle: "italic",
     },*/
     {
-      src: "https://fonts.gstatic.com/s/sarabun/v8/DtVmJx26TKEr37c9YLJvik8s7g.ttf",
+      src: "https://fonts.gstatic.com/s/sarabun/v8/DtVmJx26TKEr37c9YOZqik8s7g.ttf",
       fontWeight: "bold",
     },
     /*   {
@@ -50,7 +50,7 @@ Font.register({
 });
 
 const styles = StyleSheet.create({
-  page: { fontFamily: "THSarabunNew", padding: 30, fontSize: "16pt" },
+  page: { fontFamily: "Sarabun", padding: 30, fontSize: "10pt" },
   header: {
     display: "flex",
     flexDirection: "row",
@@ -90,10 +90,10 @@ const Header = ({ serverUrl }: { serverUrl: string }) => (
       <Image src={`${serverUrl}/logo.png`} style={{ width: 50, height: 50 }} />
     </View>
     <View style={styles.headerContent}>
-      <Text style={{ fontWeight: "bold", fontSize: "18px" }}>
+      <Text style={{ fontWeight: "bold", fontSize: "14px", marginBottom: 7 }}>
         โรงเรียนมัธยมสาธิตวัดพระศรีมหาธาตุ มหาวิทยาลัยราชภัฏพระนคร
       </Text>
-      <Text>รายชื่อนักเรียนที่ลงคะแนนเลือกตั้งประธานนักเรียน ประจำปีการศึกษา 2564</Text>
+      <Text>รายชื่อนักเรียนที่ลงคะแนนเลือกตั้งประธานนักเรียน ประจำปีการศึกษา 2564 </Text>
     </View>
   </View>
 );
@@ -162,10 +162,10 @@ const Report = ({
   let count = 1;
   const rows: RowProps[] = [
     { text: "เลขที่", weight: 0.3, value: () => count++ },
-    { text: "รหัสประจำตัว", weight: 0.5, value: (v) => v.id },
+    { text: "รหัสประจำตัว ", weight: 0.5, value: (v) => v.id },
     {
       text: "ชื่อ",
-      value: (v) => <Text style={{ marginLeft: 5, marginRight: 5 }}>{v.name}</Text>,
+      value: (v) => <Text style={{ marginLeft: 5, marginRight: 5 }}>{v.name} </Text>,
       left: true,
     },
     {
@@ -185,20 +185,26 @@ const Report = ({
         <Meta voted={data.filter((v) => v.vote).length} count={data.length} {...{ date, level }} />
         <View>
           <Table data={data}>
-            <TableHeader textAlign="center" fontSize="16">
+            <TableHeader textAlign="center" fontSize="10">
               {rows.map(({ text, weight }, i) => (
-                <TableCell key={i} style={{ fontWeight: "bold" }} weighting={weight as number}>
+                <TableCell
+                  key={i}
+                  style={{ fontWeight: "bold", paddingTop: 5, paddingBottom: 5 }}
+                  weighting={weight as number}
+                >
                   {text}
                 </TableCell>
               ))}
             </TableHeader>
-            <TableBody fontSize="16" textAlign="center">
+            <TableBody fontSize="10" textAlign="center">
               {rows.map(({ value, left, weight }, i) => (
                 <DataTableCell
                   weighting={weight}
                   key={i}
                   style={{
                     ...(left ? { textAlign: "left" } : undefined),
+                    paddingTop: 4,
+                    paddingBottom: 4,
                   }}
                   getContent={value}
                 />
@@ -228,10 +234,10 @@ const exportPDF = async (req: NextApiSessionRequest, res: NextApiResponse) => {
     );
     res.setHeader("Content-Transfer-Encoding", "Binary");
     res.setHeader("Content-type", "application/pdf");
-    res.setHeader(
+    /*  res.setHeader(
       "Content-disposition",
       `attachment; filename=VotesExport_${level.join("0")}_${date.format("YYYYMMDD_HHmmss")}.pdf`
-    );
+    );*/
     stream.pipe(res);
   } catch (err) {
     console.error(err);
