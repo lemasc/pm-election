@@ -7,6 +7,7 @@ import { auth, app } from "./firebase";
 import axios, { AxiosResponse } from "axios";
 import { CustomToken, LoginForm, LoginResult, VotesData } from "@/types/login";
 import { useDocument } from "swr-firestore-v9";
+import LogRocket from "logrocket";
 
 type FirebaseResult = {
   success: boolean;
@@ -123,6 +124,10 @@ export function useProvideAuth(): IAuthContext {
           stdName: curUser.displayName as string,
           stdClass: claims.class,
           stdNo: claims.no,
+        });
+        LogRocket.identify(curUser.uid, {
+          name: curUser.displayName as string,
+          email: curUser.email as string,
         });
         setUser(curUser);
       } else {
