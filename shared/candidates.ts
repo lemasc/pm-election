@@ -91,7 +91,7 @@ export class CandidateDatabase {
       }
       const folders = (await fs.readdir(this.getDataPath())).filter((c) => c != this.indexFile);
       const indexFile = path.join(this.getDataPath(), this.indexFile);
-      if (this.needsReindex(indexFile)) {
+      if (await this.needsReindex(indexFile)) {
         // Well, we don't need to write this everytime the users browse.
         // Just create if it doesn't exists then.
         await fs.writeFile(indexFile, JSON.stringify(folders), {
