@@ -23,6 +23,7 @@ export type ConfigPageProps = {
 
 export async function getServerConfig(): Promise<ServerConfig> {
   const date = dayjs().tz("Asia/Bangkok");
+  console.log(date.toISOString());
   const t = await admin.remoteConfig().getTemplate();
   function getParam(key: string) {
     return t.parameters[key] && t.parameters[key].defaultValue
