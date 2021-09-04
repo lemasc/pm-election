@@ -39,7 +39,7 @@ export default function CandidatesPage({
           <CandidateList data={data} />
         </div>
         <h2 className="text-xl underline">Q&amp;A ระบบการลงคะแนน</h2>
-        <div className="bg-white sm:px-8 py-8 rounded shadow">
+        <div className="bg-white sm:p-8 p-6 rounded shadow sm:text-base text-sm">
           <QuestionSection />
         </div>
         <h2 className="text-xl underline">ขั้นตอนการลงคะแนน</h2>

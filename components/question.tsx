@@ -27,14 +27,16 @@ function Answer({ children }: Props) {
   return (
     <div className="flex flex-row items-center gap-4">
       <Badge className="bg-gray-200 text-gray-800">A:</Badge>
-      <span className="leading-7">{children}</span>
+      <span className="sm:leading-7 leading-6">{children}</span>
     </div>
   );
 }
 
 function Item({ children, isLast }: { children: JSX.Element[]; isLast?: true }) {
   return (
-    <div className={`flex flex-col gap-2 ${isLast ? "" : "border-b mb-4 pb-4"}`}>{children}</div>
+    <div className={`flex flex-col sm:gap-2 gap-4 ${isLast ? "" : "border-b mb-4 pb-4"}`}>
+      {children}
+    </div>
   );
 }
 export default function QuestionSection() {
@@ -45,8 +47,7 @@ export default function QuestionSection() {
           หากไม่ได้เข้าสู่ระบบและตรวจสอบข้อมูลก่อนวันที่ 8 ก.ย. จะเกิดปัญหาใด ๆ หรือไม่
         </Question>
         <Answer>
-          ไม่ได้เกิดปัญหาในการลงคะแนน แต่หากข้อมูลนักเรียนไม่ถูกต้องหรือไม่สามารถเข้าสู่ระบบได้
-          <br />
+          ไม่เกิดปัญหาในการลงคะแนน แต่หากข้อมูลนักเรียนไม่ถูกต้องหรือไม่สามารถเข้าสู่ระบบได้
           ทางคณะกรรมการนักเรียนจะไม่รับผิดชอบในการแก้ไขใด ๆ ทั้งสิ้น
         </Answer>
       </Item>
@@ -61,7 +62,6 @@ export default function QuestionSection() {
         <Answer>
           หากระบบรับข้อมูลการลงคะแนนแล้ว ระบบจะแสดงหน้า{" "}
           <b className="text-green-600">ลงคะแนนเรียบร้อยแล้ว</b> เท่านั้น
-          <br />
           และสามารถเข้าสู่ระบบเพื่อตรวจสอบข้อมูลได้อีกครั้ง โดยระบบจะแสดงชื่อและหมายเลขที่ได้ลงคะแนน
         </Answer>
       </Item>

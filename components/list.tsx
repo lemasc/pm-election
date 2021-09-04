@@ -7,7 +7,7 @@ export default function CandidateList({ data }: { data: Candidate[] }) {
       {data &&
         data.map((c) => (
           <Link key={c.index} href={`/candidates/${c.index}`}>
-            <a className="border rounded bg-gray-50 hover:bg-gray-100 shadow max-w-xs">
+            <a className="border rounded bg-white hover:bg-gray-100 shadow max-w-xs">
               <Image
                 src={`/data/${c.index}/${c.index}.jpg`}
                 alt={c.name}
