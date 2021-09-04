@@ -61,7 +61,7 @@ export default function CandidatePage({
                   <div className="flex flex-col gap-2 flex-grow text-lg">
                     <h2 className="text-2xl md:text-3xl">
                       {data.title}
-                      {data.name} {data.surname}
+                      {data.name} {data.surname} ({data.nickname})
                     </h2>
                     <div className=" text-gray-500">ชั้นมัธยมศึกษาปีที่ {data.class}</div>
                     <div className="text-blue-500 font-bold">ผู้สมัครหมายเลข {data.index}</div>

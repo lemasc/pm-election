@@ -24,12 +24,12 @@ const navigation: Navigation[] = [
   },
   {
     href: "/candidates",
-    title: "ผู้ลงสมัคร",
+    title: "ข้อมูลการเลือกตั้ง",
   },
-  {
+  /* {
     href: "/instructions",
     title: "ขั้นตอนการใช้งาน",
-  },
+  },*/
 ];
 
 const adminNavigation: Navigation[] = [

@@ -192,7 +192,12 @@ export default function HomePage({ config }: ConfigPageProps) {
                 className="btn-large btn bg-blue-500 from-blue-500 to-blue-600 ring-blue-500 text-white"
               >
                 <UserIcon className="h-8 w-8" />
-                <span>ข้อมูลผู้ลงสมัครรับเลือกตั้ง</span>
+                <div className="flex flex-col gap-0.5">
+                  <b className="font-medium text-lg">ข้อมูลการเลือกตั้ง</b>
+                  <span className="font-light text-sm">
+                    ข้อมูลผู้ลงสมัครและรายละเอียดการลงคะแนน
+                  </span>
+                </div>
               </button>
               <a
                 title="รายงานปัญหา"

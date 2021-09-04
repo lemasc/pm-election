@@ -7,6 +7,7 @@ export type CandidateWithContent = {
   index?: number;
   title: string;
   name: string;
+  nickname: string;
   surname: string;
   class: string;
   education: Record<string, number>;
