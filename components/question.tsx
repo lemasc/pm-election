@@ -8,7 +8,7 @@ type Props = {
 function Badge({ children, className }: Props & { className: string }) {
   return (
     <span
-      className={`${className} font-bold rounded-full flex items-center justify-center h-10 w-10 flex-shrink-0`}
+      className={`${className} font-bold rounded-full flex items-center justify-center h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0`}
     >
       {children}
     </span>
@@ -34,7 +34,11 @@ function Answer({ children }: Props) {
 
 function Item({ children, isLast }: { children: JSX.Element[]; isLast?: true }) {
   return (
-    <div className={`flex flex-col sm:gap-2 gap-4 ${isLast ? "" : "border-b mb-4 pb-4"}`}>
+    <div
+      className={`flex flex-col sm:gap-2 gap-4 ${
+        isLast ? "" : "border-b sm:mb-4 sm:pb-4 mb-6 pb-6"
+      }`}
+    >
       {children}
     </div>
   );
