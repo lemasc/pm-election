@@ -15,6 +15,7 @@ export type ServerConfig = {
   canRegister: boolean;
   maintenance: boolean;
   testMode: boolean;
+  refreshInterval: number;
 };
 
 export type ConfigPageProps = {
@@ -40,6 +41,7 @@ export async function getServerConfig(): Promise<ServerConfig> {
     inTime: date.isBetween("2021-09-08 08:30:00", "2021-09-08 17:00:00") || testMode("inTime"),
     maintenance: getParam("maintenance"),
     testMode: testMode("canRegister") || testMode("inTime"),
+    refreshInterval: getParam("refreshInterval"),
   };
 }
 

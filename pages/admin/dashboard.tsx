@@ -28,11 +28,13 @@ function Widget({
   title,
   value,
   color,
+  total,
 }: {
   show: boolean;
   title: string;
-  value: number | undefined;
+  value: number;
   color?: string;
+  total?: number;
 }): JSX.Element {
   return (
     <div className="flex flex-col gap-2 border rounded p-4 items-center">
@@ -40,6 +42,11 @@ function Widget({
       <span className={`w-full text-center text-4xl font-bold ${color ? color : "text-green-500"}`}>
         {show ? value : <Skeleton />}
       </span>
+      {show && total && (
+        <span className="text-center w-full text-gray-500 text-sm">
+          ({((value * 100) / total).toFixed(2)}%)
+        </span>
+      )}
     </div>
   );
 }
@@ -68,7 +75,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
   const [notVoted, setNotVoted] = useState<number | undefined>(undefined);
   const { data } = useDocument<Summary>("/votes/summary", {
     parseDates: ["timestamp"],
-    //refreshInterval: 6000 * 2,
+    refreshInterval: 1000 * 60 * config.refreshInterval,
   });
   useEffect(() => {
     if (data) {
@@ -91,12 +98,12 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
       </Head>
       <Layout>
         <div
-          className={`${width >= 420 ? "flex-row" : "flex-col"} flex justify-center gap-4 -mt-4`}
+          className={`${width >= 420 ? "flex-row" : "flex-col"} flex justify-center gap-4 -mt-2`}
         >
           <div className="flex flex-col items-start justify-center flex-grow gap-2">
             <h1 className="font-medium header-font  text-3xl ">แผงควบคุม</h1>
             <span className="text-sm sm:text-base text-gray-800">
-              อัพเดทข้อมูลอัตโนมัติทุก 2 นาที
+              อัพเดทข้อมูลอัตโนมัติทุก {config.refreshInterval} นาที
             </span>
           </div>
           <div
@@ -143,6 +150,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
                   show={data !== undefined}
                   title={i === 6 ? "ไม่ประสงค์ลงคะแนน" : "หมายเลข " + (i + 1)}
                   value={data && data[i + 1] ? data[i + 1] : 0}
+                  total={data?.users}
                   key={i + 1}
                 />
               );
@@ -152,6 +160,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
               show={notVoted !== undefined}
               title="ยังไม่ได้ลงคะแนน"
               value={notVoted ? notVoted : 0}
+              total={data?.users}
             />
           </div>
         </div>

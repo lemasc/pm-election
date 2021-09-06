@@ -234,10 +234,10 @@ const exportPDF = async (req: NextApiSessionRequest, res: NextApiResponse) => {
     );
     res.setHeader("Content-Transfer-Encoding", "Binary");
     res.setHeader("Content-type", "application/pdf");
-    /*  res.setHeader(
+    res.setHeader(
       "Content-disposition",
       `attachment; filename=VotesExport_${level.join("0")}_${date.format("YYYYMMDD_HHmmss")}.pdf`
-    );*/
+    );
     stream.pipe(res);
   } catch (err) {
     console.error(err);

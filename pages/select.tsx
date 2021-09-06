@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { Candidate, CandidateDatabase } from "@/shared/candidates";
+import { Candidate, CandidateDatabase, noCandidate } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { withConfig } from "@/shared/api/config";
@@ -42,14 +42,6 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(
     };
   })
 );
-
-export const noCandidate: Candidate = {
-  index: 7,
-  title: "",
-  name: "ไม่ประสงค์ลงคะแนน",
-  surname: "",
-  class: "-",
-};
 
 function CandidateItem({ data }: { data: Candidate }) {
   return (

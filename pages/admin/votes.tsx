@@ -1,11 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
 
 import Layout from "@/components/layout";
-import { useDocument } from "swr-firestore-v9";
 import { useEffect, useState } from "react";
-import { useWindowWidth } from "@react-hook/window-size/throttled";
 import dayjs from "dayjs";
 import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -75,6 +72,14 @@ export default function AdminVotesPage() {
       setValue("room", 1);
     }
   }, [setValue, watch]);
+
+  function withPercentage(value: number) {
+    if (result.data) {
+      return `${value}/${result.data.length} คน (${((value * 100) / result.data.length).toFixed(
+        2
+      )}%)`;
+    }
+  }
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Head>
@@ -91,12 +96,17 @@ export default function AdminVotesPage() {
             className="flex flex-col sm:flex-row flex-grow gap-6 items-center"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex flex-col flex-grow gap-1 text-center sm:text-left">
+            <div className="flex flex-col flex-grow gap-1 text-center sm:text-left flex-shrink-0">
               <h2 className="text-xl flex-grow">เรียกดูข้อมูล</h2>
               {!fetching && result.data.length > 0 && (
                 <>
                   <span className="text-sm text-gray-500">
-                    แสดงผลทั้งหมด {result.data.length} รายการ
+                    ลงทะเบียนแล้ว{" "}
+                    {withPercentage(result.data.filter(([id, name, acc, vote]) => acc).length)}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    ลงคะแนนแล้ว{" "}
+                    {withPercentage(result.data.filter(([id, name, acc, vote]) => vote).length)}
                   </span>
                   <Link
                     prefetch={false}
