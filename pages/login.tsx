@@ -138,11 +138,23 @@ export default function LoginPage() {
         <span className="text-sm text-gray-500">
           การใช้งานระบบเลือกตั้งนี้ ถือว่าคุณได้ยอมรับ{" "}
           <Link href="/terms" prefetch={false}>
-            <a className="underline text-blue-600 hover:text-blue-700">ข้อตกลงการใช้งาน</a>
+            <a
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline text-blue-600 hover:text-blue-700"
+            >
+              ข้อตกลงการใช้งาน
+            </a>
           </Link>{" "}
           และ{" "}
           <Link href="/privacy" prefetch={false}>
-            <a className="underline text-blue-600 hover:text-blue-700">นโยบายความเป็นส่วนตัว</a>
+            <a
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline text-blue-600 hover:text-blue-700"
+            >
+              นโยบายความเป็นส่วนตัว
+            </a>
           </Link>{" "}
           แล้ว
         </span>

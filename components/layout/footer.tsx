@@ -1,6 +1,9 @@
 import { useAuth } from "@/shared/authContext";
 import { useRouter } from "next/router";
 
+export const LOGOUT_PROMPT =
+  "คุณต้องการออกจากระบบการลงคะแนนหรือไม่? การดำเนินการทั้งหมดจะถูกละทิ้ง";
+
 export default function Footer() {
   const router = useRouter();
   const { signOut } = useAuth();
@@ -8,7 +11,8 @@ export default function Footer() {
     <footer className="flex justify-center items-center border p-8 w-full text-gray-500 text-sm bg-white">
       <button
         onClick={async () => {
-          if (confirm("คุณต้องการออกจากระบบการลงคะแนนหรือไม่? การดำเนินการทั้งหมดจะถูกละทิ้ง")) {
+          if (router.pathname !== "/select" && confirm(LOGOUT_PROMPT)) {
+            // Select page prompt will be handle in global navigation state.
             await signOut();
             router.replace("/api/logout");
           }

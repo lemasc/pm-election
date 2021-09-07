@@ -22,14 +22,6 @@ export type Candidate = Pick<
   "index" | "title" | "name" | "surname" | "class"
 >;
 
-export const noCandidate: Candidate = {
-  index: 7,
-  title: "",
-  name: "ไม่ประสงค์ลงคะแนน",
-  surname: "",
-  class: "-",
-};
-
 export class CandidateDatabase {
   private indexFile = "path.json";
   private location = "data";

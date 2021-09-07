@@ -1,10 +1,10 @@
-import { ReactNode, ReactNodeArray, useState } from "react";
+import { ReactNode, ReactNodeArray, useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import Layout, { appPages } from "./layout";
-import Footer from "./layout/footer";
+import Footer, { LOGOUT_PROMPT } from "./layout/footer";
 const AuthSpinner = dynamic(() => import("./auth/spinner"));
 
 type WizardProps = {
@@ -23,6 +23,53 @@ export default function Wizard({ children }: WizardProps) {
     }
     return title.reverse().join(" : ");
   }
+  const lastHistoryState = useRef(global.history?.state);
+  useEffect(() => {
+    const storeLastHistoryState = () => {
+      lastHistoryState.current = history.state;
+    };
+    router.events.on("routeChangeComplete", storeLastHistoryState);
+    return () => {
+      router.events.off("routeChangeComplete", storeLastHistoryState);
+    };
+  }, [router.events]);
+  /**
+   * Route change events in Next.js; a long time issue
+   * Currently use https://github.com/vercel/next.js/issues/2476#issuecomment-850030407
+   * which could both handle onRouteChange and beforeUnload (popState Hack).
+   * However, DOM is reloaded but the React state still there (screen filickering).
+   *
+   */
+  useEffect(() => {
+    const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+      (e || window.event).returnValue = LOGOUT_PROMPT;
+      return LOGOUT_PROMPT; // Gecko + Webkit, Safari, Chrome etc.
+    };
+    const beforeRouteHandler = (url: string) => {
+      if (router.pathname !== url && url !== "/success" && !confirm(LOGOUT_PROMPT)) {
+        // to inform NProgress or something ...
+        router.events.emit("routeChangeError");
+        // HACK
+        const state = lastHistoryState.current;
+        if (state != null && history.state != null && state.idx !== history.state.idx) {
+          history.go(state.idx < history.state.idx ? -1 : 1);
+        }
+        // tslint:disable-next-line: no-string-throw
+        throw `Route change to "${url}" was aborted (this error can be safely ignored). See https://github.com/zeit/next.js/issues/2476.`;
+      }
+    };
+    if (router.pathname == "/select") {
+      window.addEventListener("beforeunload", beforeUnloadHandler);
+      router.events.on("routeChangeStart", beforeRouteHandler);
+    } else {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+      router.events.off("routeChangeStart", beforeRouteHandler);
+    }
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+      router.events.off("routeChangeStart", beforeRouteHandler);
+    };
+  }, [router.events, router.pathname]);
   return (
     <>
       <Head>

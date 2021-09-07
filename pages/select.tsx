@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { Candidate, CandidateDatabase, noCandidate } from "@/shared/candidates";
+import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { withConfig } from "@/shared/api/config";
@@ -19,6 +19,14 @@ type ServerProps = {
 type ModalState = {
   show: boolean;
   data?: Candidate;
+};
+
+export const noCandidate: Candidate = {
+  index: 7,
+  title: "",
+  name: "ไม่ประสงค์ลงคะแนน",
+  surname: "",
+  class: "-",
 };
 
 export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(
@@ -145,7 +153,7 @@ export default function SelectPage({ candidates: data }: ServerProps) {
               <div className="flex items-center justify-center h-32 w-full">ไม่มีข้อมูล</div>
             )}
             <ModalComponent
-              closable={true}
+              closable={!fetching}
               onClose={() => setModal((m) => ({ ...m, show: false }))}
               show={modal.show}
               title="รายละเอียดผู้ลงสมัคร"

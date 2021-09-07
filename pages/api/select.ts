@@ -5,10 +5,11 @@ import { firestore } from "firebase-admin";
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
 import { createSID } from "@/shared/authContext";
-import { Candidate, CandidateDatabase, noCandidate } from "@/shared/candidates";
+import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { checkParameters } from "./login";
 import { NextApiSessionRequest, withAPISession } from "@/shared/api/session";
 import { withAuth } from "@/shared/api";
+import { noCandidate } from "../select";
 
 async function verifyRecaptcha(req: NextApiSessionRequest) {
   try {
@@ -52,13 +53,13 @@ export default withAuth(
         stdNo: req.token.no,
         stdClass: req.token.class,
       };
-      await votesRef.set({
+      /* await votesRef.set({
         ...votes,
         ...profile,
         timestamp: firestore.FieldValue.serverTimestamp(),
         ip: getClientIp(req),
         useragent: req.headers["user-agent"],
-      });
+      });*/
       req.session.set("profile", { ...profile, votes });
       await req.session.save();
       res.status(200).json({ success: true });
