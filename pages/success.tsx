@@ -1,34 +1,22 @@
-import { GetServerSideProps } from "next";
-import { withSession } from "@/shared/api/session";
-import { LoginResult } from "@/types/login";
 import Wizard from "@/components/wizard";
 import Profile from "@/components/profile";
 import { useAuth } from "@/shared/authContext";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export const getServerSideProps: GetServerSideProps = withSession(async (context) => {
-  const data: LoginResult | undefined = context.req.session.get("profile");
-  if (!data || !data.votes) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: true,
-      },
-    };
-  }
-  return {
-    props: data,
-  };
-});
-
-export default function SuccessPage(props: LoginResult) {
-  const { signOut } = useAuth();
+export default function SuccessPage() {
+  const { signOut, votes: props, ready } = useAuth();
   const router = useRouter();
+  useEffect(() => {
+    if (ready && !(props && props.selected)) {
+      router.replace("/");
+    }
+  }, [router, props, ready]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Wizard>
         <h2 className="text-2xl">ลงคะแนนเรียบร้อยแล้ว!</h2>
-        <Profile {...props} />
+        {props && <Profile {...props} />}
 
         <b className="font-bold text-apple-600">กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐานในการลงคะแนน</b>
         <button

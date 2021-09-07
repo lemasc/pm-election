@@ -6,12 +6,14 @@ import { useRouter } from "next/router";
 import Layout, { appPages } from "./layout";
 import Footer, { LOGOUT_PROMPT } from "./layout/footer";
 const AuthSpinner = dynamic(() => import("./auth/spinner"));
+import { useAuth } from "@/shared/authContext";
 
 type WizardProps = {
   children: ReactNode | ReactNodeArray;
 };
 
 export default function Wizard({ children }: WizardProps) {
+  const { votes } = useAuth();
   const [currentPage, setCurrentPage] = useState(-1);
   const router = useRouter();
 
@@ -41,13 +43,18 @@ export default function Wizard({ children }: WizardProps) {
    *
    */
   useEffect(() => {
+    let currentUrl = "";
     const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
-      (e || window.event).returnValue = LOGOUT_PROMPT;
-      return LOGOUT_PROMPT; // Gecko + Webkit, Safari, Chrome etc.
+      if (currentUrl !== "/api/logout") {
+        (e || window.event).returnValue = LOGOUT_PROMPT;
+        return LOGOUT_PROMPT; // Gecko + Webkit, Safari, Chrome etc.
+      }
     };
+    const ignorePaths = ["/", "/api/logout", "/success"];
     const beforeRouteHandler = (url: string) => {
-      if (router.pathname !== url && url !== "/success" && !confirm(LOGOUT_PROMPT)) {
-        // to inform NProgress or something ...
+      currentUrl = url;
+      // url == "/" is used on auth detection, so ignore it also.
+      if (router.pathname !== url && !ignorePaths.includes(url) && !confirm(LOGOUT_PROMPT)) {
         router.events.emit("routeChangeError");
         // HACK
         const state = lastHistoryState.current;
@@ -55,7 +62,7 @@ export default function Wizard({ children }: WizardProps) {
           history.go(state.idx < history.state.idx ? -1 : 1);
         }
         // tslint:disable-next-line: no-string-throw
-        throw `Route change to "${url}" was aborted (this error can be safely ignored). See https://github.com/zeit/next.js/issues/2476.`;
+        throw `ยกเลิกการเปลี่ยนเส้นทางไปยัง "${url}" (สามารถเพิกเฉยข้อผิดพลาดนี้ได้).`;
       }
     };
     if (router.pathname == "/select") {
@@ -70,6 +77,13 @@ export default function Wizard({ children }: WizardProps) {
       router.events.off("routeChangeStart", beforeRouteHandler);
     };
   }, [router.events, router.pathname]);
+
+  useEffect(() => {
+    if (votes && votes.selected) {
+      setCurrentPage(3);
+    }
+  }, [votes]);
+
   return (
     <>
       <Head>
@@ -78,30 +92,36 @@ export default function Wizard({ children }: WizardProps) {
       {router.pathname !== "/login" && <AuthSpinner />}
       <Layout>
         <div className="text-sm sm:text-base md:p-8 p-4 mx-8 sm:mx-4 flex md:flex-col flex-row flex-wrap md:w-auto border gap-4 bg-white rounded-lg flex-shrink-0">
-          {appPages.map((d, i) => {
-            if (router.pathname == `/${d.page}` && currentPage !== i) setCurrentPage(i);
-            return (
-              <div
-                className={`flex flex-row gap-4 items-center cursor-default ${
-                  i > currentPage ? "text-gray-400" : i == currentPage ? "text-gray-900" : ""
-                }`}
-                key={d.page}
-              >
+          {votes !== undefined &&
+            appPages.map((d, i) => {
+              if (
+                router.pathname == `/${d.page}` &&
+                !(votes && votes.selected) &&
+                currentPage !== i
+              )
+                setCurrentPage(i);
+              return (
                 <div
-                  className={`font-bold border h-10 w-10 md:h-12 md:w-12 flex justify-center items-center rounded-lg text-lg ${
-                    i <= currentPage
-                      ? i == currentPage
-                        ? "bg-gradient-to-b from-purple-500 to-purple-600 text-white shadow-md"
-                        : "text-purple-700 bg-gray-50"
-                      : "bg-gray-100 text-gray-400"
+                  className={`flex flex-row gap-4 items-center cursor-default ${
+                    i > currentPage ? "text-gray-400" : i == currentPage ? "text-gray-900" : ""
                   }`}
+                  key={d.page}
                 >
-                  {i + 1}
+                  <div
+                    className={`font-bold border h-10 w-10 md:h-12 md:w-12 flex justify-center items-center rounded-lg text-lg ${
+                      i <= currentPage
+                        ? i == currentPage
+                          ? "bg-gradient-to-b from-purple-500 to-purple-600 text-white shadow-md"
+                          : "text-purple-700 bg-gray-50"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {i + 1}
+                  </div>
+                  <div className="sarabun-font">{d.name}</div>
                 </div>
-                <div className="sarabun-font">{d.name}</div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
         <div className="shadow-md rounded-lg border bg-white p-8 flex flex-col gap-8 items-center justify-center mx-4">
           {children}

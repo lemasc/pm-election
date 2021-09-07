@@ -1,19 +1,21 @@
-import { createRef, useState } from "react";
+import { createRef, useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import axios from "axios";
-import ReCAPTCHA from "react-google-recaptcha";
+//import ReCAPTCHA from "react-google-recaptcha";
 
 import { Candidate, CandidateDatabase } from "@/shared/candidates";
 import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { withConfig } from "@/shared/api/config";
 import { withSession } from "@/shared/api/session";
+import { getClientIp } from "@supercharge/request-ip/dist";
+//import instance, { RETRY_MSG } from "@/shared/request";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 type ServerProps = {
   candidates: Candidate[];
+  ip: string;
 };
 
 type ModalState = {
@@ -31,7 +33,7 @@ export const noCandidate: Candidate = {
 
 export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(
   withSession(async ({ req }) => {
-    const data = req.session.get("profile");
+    /*    const data = req.session.get("profile");
     if (data) {
       // Profile session will only set if user was selected.
       return {
@@ -40,12 +42,14 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = withConfig(
           permanent: true,
         },
       };
-    }
+    }*/
     const db = new CandidateDatabase(req);
     const candidates = await db.getCandidates(true);
+
     return {
       props: {
         candidates,
+        ip: getClientIp(req),
       },
     };
   })
@@ -75,39 +79,39 @@ function CandidateItem({ data }: { data: Candidate }) {
     </>
   );
 }
-export default function SelectPage({ candidates: data }: ServerProps) {
-  const { profile: props, user } = useAuth();
-  const recaptchaRef = createRef<ReCAPTCHA>();
+export default function SelectPage({ candidates: data, ip }: ServerProps) {
+  const { profile: props, select: selectCandidate, votes, ready } = useAuth();
+  //const recaptchaRef = createRef<ReCAPTCHA>();
   const router = useRouter();
   const [modal, setModal] = useState<ModalState>({ show: false });
   const [errorText, setError] = useState<string | null>(null);
   const [fetching, setFetch] = useState(false);
   async function select() {
-    if (!modal.data || !modal.data.index) return;
+    if (!modal.data || !modal.data.index || !props) return;
     try {
       setFetch(true);
-      const token = await recaptchaRef.current?.executeAsync();
-      if (!token) return;
-      await axios.post(
+      setError(null);
+      /* await instance(user, () => setError(RETRY_MSG), recaptchaRef.current).post(
         "/api/select",
         new URLSearchParams({
           id: modal.data.index.toString(),
-          token,
-        }),
-        {
-          headers: {
-            Authorization: `Bearer ${await user?.getIdToken()}`,
-          },
-        }
-      );
+        })
+      );*/
+      await selectCandidate(modal.data, ip);
       router.replace("/success");
     } catch (err) {
       console.error(err);
-      alert("ไม่สามารถลงคะแนนในระบบได้");
-    } finally {
+      setError("ไม่สามารถลงคะแนนในระบบได้");
       setFetch(false);
+    } finally {
+      setError(null);
     }
   }
+  useEffect(() => {
+    if (ready && !fetching && ((votes && votes.selected) || !props)) {
+      router.replace("/");
+    }
+  }, [props, ready, router, votes, fetching]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Wizard>
@@ -122,10 +126,6 @@ export default function SelectPage({ candidates: data }: ServerProps) {
               <br />
               หากเกิดข้อผิดพลาดใด ๆ กรุณาแจ้งคณะกรรมการนักเรียนเพื่อดำเนินการแก้ไขต่อไป
             </span>
-
-            {errorText && (
-              <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">{errorText}</span>
-            )}
             <div
               className={"items-center justify-center grid md:grid-cols-2 2xl:grid-cols-3 gap-8"}
             >
@@ -176,6 +176,8 @@ export default function SelectPage({ candidates: data }: ServerProps) {
                   <br />
                   กรุณาตรวจสอบข้อมูลให้เรียบร้อย
                 </span>
+
+                {errorText && <span className="text-red-600 font-bold">{errorText}</span>}
               </div>
               <div className="p-6 bg-gray-100 grid grid-cols-2 gap-4">
                 <button
@@ -198,11 +200,11 @@ export default function SelectPage({ candidates: data }: ServerProps) {
             </ModalComponent>
           </>
         )}
-        <ReCAPTCHA
+        {/*<ReCAPTCHA
           size="invisible"
           ref={recaptchaRef}
           sitekey={process.env.NEXT_PUBLIC_RECAPTCHA as string}
-        />
+        />*/}
       </Wizard>
     </div>
   );

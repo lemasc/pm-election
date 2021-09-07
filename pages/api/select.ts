@@ -1,6 +1,5 @@
 import axios from "axios";
 import { getClientIp } from "@supercharge/request-ip";
-import { firestore } from "firebase-admin";
 
 import admin from "@/shared/firebase-admin";
 import { LoginResult } from "@/types/login";
@@ -53,13 +52,13 @@ export default withAuth(
         stdNo: req.token.no,
         stdClass: req.token.class,
       };
-      /* await votesRef.set({
+      await votesRef.set({
         ...votes,
         ...profile,
-        timestamp: firestore.FieldValue.serverTimestamp(),
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
         ip: getClientIp(req),
         useragent: req.headers["user-agent"],
-      });*/
+      });
       req.session.set("profile", { ...profile, votes });
       await req.session.save();
       res.status(200).json({ success: true });

@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="flex justify-center items-center border p-8 w-full text-gray-500 text-sm bg-white">
       <button
         onClick={async () => {
-          if (router.pathname !== "/select" && confirm(LOGOUT_PROMPT)) {
+          if (confirm(LOGOUT_PROMPT)) {
             // Select page prompt will be handle in global navigation state.
             await signOut();
             router.replace("/api/logout");

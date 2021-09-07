@@ -16,6 +16,7 @@ export type ServerConfig = {
   maintenance: boolean;
   testMode: boolean;
   refreshInterval: number;
+  fallback: boolean;
 };
 
 export type ConfigPageProps = {
@@ -42,6 +43,7 @@ export async function getServerConfig(): Promise<ServerConfig> {
     maintenance: getParam("maintenance"),
     testMode: testMode("canRegister") || testMode("inTime"),
     refreshInterval: getParam("refreshInterval"),
+    fallback: getParam("fallback"),
   };
 }
 
@@ -53,6 +55,14 @@ export function withConfig<P = any>(handler?: GetServerSideProps<P>) {
       return {
         redirect: {
           destination: "/",
+          permanent: true,
+        },
+      };
+    }
+    if (config.fallback && ctx.req.url === "/login") {
+      return {
+        redirect: {
+          destination: "/fallback",
           permanent: true,
         },
       };

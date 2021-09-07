@@ -5534,6 +5534,11 @@ restructure@^0.5.3:
   dependencies:
     browserify-optional "^1.0.0"
 
+retry-axios@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-2.6.0.tgz#d4dc5c8a8e73982e26a705e46a33df99a28723e0"
+  integrity sha512-pOLi+Gdll3JekwuFjXO3fTq+L9lzMQGcSq7M5gIjExcl3Gu1hd4XXuf5o3+LuSBsaULQH7DiNbsqPd1chVpQGQ==
+
 retry-request@^4.0.0, retry-request@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/retry-request/-/retry-request-4.2.2.tgz#b7d82210b6d2651ed249ba3497f07ea602f1a903"

@@ -89,7 +89,6 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
     } else {
       setNotVoted(undefined);
     }
-    console.log(data);
   }, [data]);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
@@ -127,7 +126,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg border shadow">
-          <div className="flex md:flex-row flex-col gap-4 md:items-center">
+          <div className="flex sm:flex-row flex-col gap-4 sm:items-center">
             <div className="flex flex-col flex-grow gap-1">
               <h2 className="text-xl">ภาพรวมการลงคะแนน</h2>
               <span className="text-sm text-gray-500">
@@ -137,9 +136,14 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
               </span>
             </div>
             {data && (
-              <span className="flex-shrink-0 font-bold text-purple-600">
-                จำนวนผู้ลงทะเบียนทั้งหมด {data.users} คน
-              </span>
+              <div className="flex flex-col text-right gap-1">
+                <span className="flex-shrink-0 font-bold text-purple-600">
+                  จำนวนผู้ลงทะเบียนทั้งหมด {data.users}/947 คน
+                </span>
+                <span className="text-sm text-gray-500">
+                  คิดเป็น {((data.users * 100) / 947).toFixed(2)}% ของนักเรียนทั้งหมด
+                </span>
+              </div>
             )}
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 py-4">

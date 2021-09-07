@@ -1,22 +1,19 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/router";
 import { signInWithEmailAndPassword, User } from "firebase/auth";
-import { fetchAndActivate, getRemoteConfig, getValue } from "firebase/remote-config";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
-import { auth, app } from "./firebase";
-import axios, { AxiosResponse } from "axios";
+import { auth, db } from "./firebase";
+import { AxiosResponse } from "axios";
 import { CustomToken, LoginForm, LoginResult, VotesData } from "@/types/login";
 import { useDocument } from "swr-firestore-v9";
+import instance from "./request";
+import { Candidate } from "./candidates";
 //import LogRocket from "logrocket";
 
 type FirebaseResult = {
   success: boolean;
   message?: string;
-};
-
-type Config = {
-  maintenance: boolean;
-  test_mode: boolean;
 };
 
 /**
@@ -39,9 +36,9 @@ interface IAuthContext {
   ready: boolean;
   votes: VotesData | null | undefined;
   profile: LoginResult | undefined;
-  config: Config;
   signIn: (sid: string, password: string) => Promise<FirebaseResult>;
-  signInNative: (data: LoginForm) => Promise<FirebaseResult>;
+  signInNative: (data: LoginForm, onRetry: () => void) => Promise<FirebaseResult>;
+  select: (candidate: Candidate, ip: string) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
@@ -56,13 +53,8 @@ export const useAuth = (): IAuthContext => {
 // Provider hook that creates auth object and handles state
 export function useProvideAuth(): IAuthContext {
   const router = useRouter();
-  const [config, setConfig] = useState<Config>({
-    maintenance: false,
-    test_mode: false,
-  });
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<LoginResult | undefined>(undefined);
-
   const [ready, setReady] = useState<boolean>(false);
   const [votes, setVotes] = useState<VotesData | null>(null);
   const { data: _votes } = useDocument<VotesData>(user ? `/votes/${user.uid}` : null, {
@@ -89,15 +81,15 @@ export function useProvideAuth(): IAuthContext {
     }
   };
 
-  const signInNative = async (data: LoginForm): Promise<FirebaseResult> => {
+  const signInNative = async (data: LoginForm, onRetry: () => void): Promise<FirebaseResult> => {
     try {
-      await axios.post("/api/login", new URLSearchParams(data));
+      await instance(undefined, onRetry).post("/api/login", new URLSearchParams(data));
       return { success: true };
     } catch (err) {
       const response = err.response as AxiosResponse;
       if (response) {
         switch (response.status) {
-          case 403:
+          case 401:
             return { success: false, message: "invalid-captcha" };
           case 404:
             return { success: false, message: "invalid-credentials" };
@@ -113,6 +105,21 @@ export function useProvideAuth(): IAuthContext {
     setProfile(undefined);
   };
 
+  const select = async (candidate: Candidate, ip: string) => {
+    if (!user || !profile || !navigator || !candidate.index) return false;
+
+    const votes = {
+      name: candidate.title + candidate.name + " " + candidate.surname,
+      selected: candidate.index,
+      ...profile,
+      timestamp: serverTimestamp(),
+      ip,
+      useragent: navigator.userAgent,
+    };
+    await setDoc(doc(db, "votes", user.uid), votes);
+    setVotes({ ...votes, timestamp: new Date() });
+    return true;
+  };
   useEffect(() => {
     let _isMounted = true;
     return auth.onIdTokenChanged(async (curUser) => {
@@ -138,7 +145,7 @@ export function useProvideAuth(): IAuthContext {
       };
     });
   }, [router, user]);
-
+  /*
   useEffect(() => {
     let authReady: ReturnType<typeof setTimeout>;
     let target = "";
@@ -155,7 +162,7 @@ export function useProvideAuth(): IAuthContext {
           }
           target !== "" && router.replace(target);
         }
-      }, 2000);
+      }, 5000);
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
@@ -163,26 +170,11 @@ export function useProvideAuth(): IAuthContext {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
-  }, [ready, router, user]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const config = getRemoteConfig(app);
-        await fetchAndActivate(config);
-        setConfig({
-          test_mode: getValue(config, "test_mode").asBoolean(),
-          maintenance: getValue(config, "maintenance").asBoolean(),
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, []);
+  }, [ready, router, user]);*/
 
   return {
     user,
-    config,
+    select,
     votes,
     profile,
     ready,

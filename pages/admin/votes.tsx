@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import instance from "@/shared/request";
 import { useAuth } from "@/shared/authContext";
 import Loader from "react-loader-spinner";
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
@@ -52,13 +52,7 @@ export default function AdminVotesPage() {
       setfetching(true);
       setResult({
         ...form,
-        data: (
-          await axios.post("/api/votes", form, {
-            headers: {
-              Authorization: `Bearer ${await user.getIdToken()}`,
-            },
-          })
-        ).data,
+        data: (await instance(user).post("/api/votes", form)).data,
       });
     } catch (err) {
       console.error(err);

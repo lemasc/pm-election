@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import banner from "../public/logo.png";
 
-export default function Home() {
+export default function Maintenance() {
   const router = useRouter();
   return (
     <div className="flex flex-1 flex-col h-screen items-center justify-center">

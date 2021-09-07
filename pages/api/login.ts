@@ -44,7 +44,7 @@ export default withAPISession(
         responseType: "document",
       });
       if ((login.data as string).includes("รหัสยืนยันตัวตน"))
-        return res.status(403).json({ success: false });
+        return res.status(401).json({ success: false });
       if ((login.data as string).includes("ไม่พบข้อมูลนักเรียนในระบบ"))
         return res.status(404).json({ success: false });
       const document = parse(login.data.replace(/\t/g, ""));
@@ -68,21 +68,26 @@ export default withAPISession(
       } else {
         data.push(["promptID", false]);
       }
+
+      await req.session.save();
       // Internal UID
       const uid = document.querySelector("input[type='hidden']").attributes.value;
       const final: LoginResult = Object.fromEntries(data);
-      await admin.auth().createUser({
-        uid,
-        email: createEmail(final.stdID),
-        displayName: final.stdName,
-        password: req.body.stdIDCard,
-      });
-      await admin.auth().setCustomUserClaims(uid, {
-        no: final.stdNo,
-        class: final.stdClass,
-      });
-      await req.session.save();
-      res.status(200).json({ success: true });
+      try {
+        await admin.auth().createUser({
+          uid,
+          email: createEmail(final.stdID),
+          displayName: final.stdName,
+          password: req.body.stdIDCard,
+        });
+        await admin.auth().setCustomUserClaims(uid, {
+          no: final.stdNo,
+          class: final.stdClass,
+        });
+        return res.status(200).json({ success: true });
+      } catch (err) {
+        return res.status(403).json({ success: false });
+      }
     } catch (err) {
       console.error(err);
       res.status(500).json({ success: false });

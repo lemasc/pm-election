@@ -10,6 +10,7 @@ import { useAuth } from "@/shared/authContext";
 import Wizard from "@/components/wizard";
 import { IDCardInput, IDInput } from "@/components/auth/inputs";
 import { withConfig } from "@/shared/api/config";
+import { RETRY_MSG } from "@/shared/request";
 const ModalComponent = dynamic(() => import("@/components/layout/modal"));
 
 const CAPTCHA_ERROR = "Captcha ไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง";
@@ -41,7 +42,7 @@ export default function LoginPage() {
       setFetch(false);
       return showPrompt(true);
     }
-    const result = await signInNative(data);
+    const result = await signInNative(data, () => setError(RETRY_MSG));
     if (!result.success && result.message) {
       setFetch(false);
       switch (result.message) {
@@ -51,6 +52,8 @@ export default function LoginPage() {
           return setError(CAPTCHA_ERROR);
         case "invalid-credentials":
           return setError(CREDENTIALS_ERROR);
+        default:
+          return setError("ไม่สามารถเข้าสู่ระบบได้");
       }
     } else {
       await _signIn(data);
@@ -77,10 +80,10 @@ export default function LoginPage() {
         default:
           setError("ไม่สามารถเข้าสู่ระบบได้ เนื่องจาก " + result.message.replace("auth/", ""));
       }
+      setFetch(false);
     } else {
       router.replace("/profile");
     }
-    setFetch(false);
   }
   useEffect(() => {
     if (isValidating && error !== null) setError(null);

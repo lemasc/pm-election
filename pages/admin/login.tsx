@@ -5,7 +5,7 @@ import { IDInput, IDCardInput } from "@/components/auth/inputs";
 import { useForm } from "react-hook-form";
 import { LoginForm } from "@/types/login";
 import { useAuth } from "@/shared/authContext";
-import axios from "axios";
+import instance from "@/shared/request";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -34,18 +34,14 @@ export default function AdminLoginPage(): JSX.Element {
     (async () => {
       if (fetching && user) {
         try {
-          await axios.get("/api/admin", {
-            headers: {
-              Authorization: `Bearer ${await user.getIdToken()}`,
-            },
-          });
+          await instance(user).get("/api/admin");
           router.replace("/admin/dashboard");
         } catch (err) {
           console.error(err);
-          return alert("ไม่สามารถเข้าสู่ระบบได้");
+          alert("ไม่สามารถเข้าสู่ระบบได้");
+        } finally {
+          setFetch(false);
         }
-
-        setFetch(false);
       }
     })();
   }, [fetching, user, router]);
