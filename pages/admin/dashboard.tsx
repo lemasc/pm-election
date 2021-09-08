@@ -96,9 +96,7 @@ export default function AdminDashboardPage({ config }: { config: ServerConfig })
         <title>หน้าควบคุม : WPM Election System</title>
       </Head>
       <Layout>
-        <div
-          className={`${width >= 420 ? "flex-row" : "flex-col"} flex justify-center gap-4 -mt-2`}
-        >
+        <div className={`sm:flex-row flex-col flex justify-center gap-4 -mt-2`}>
           <div className="flex flex-col items-start justify-center flex-grow gap-2">
             <h1 className="font-medium header-font  text-3xl ">แผงควบคุม</h1>
             <span className="text-sm sm:text-base text-gray-800">

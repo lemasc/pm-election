@@ -39,7 +39,6 @@ export default function AdminLoginPage(): JSX.Element {
         } catch (err) {
           console.error(err);
           alert("ไม่สามารถเข้าสู่ระบบได้");
-        } finally {
           setFetch(false);
         }
       }
