@@ -18,7 +18,11 @@ export default function SuccessPage() {
         <h2 className="text-2xl">ลงคะแนนเรียบร้อยแล้ว!</h2>
         {props && profile && <Profile {...profile} votes={props} />}
 
-        <b className="font-bold text-apple-600">กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐานในการลงคะแนน</b>
+        <b className="font-bold text-apple-600 leading-7">
+          สามารถเข้าสู่ระบบได้อีกครั้งเพื่อตรวจสอบสถานะการลงคะแนน
+          <br />
+          กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐาน
+        </b>
         <button
           onClick={() => {
             signOut();
