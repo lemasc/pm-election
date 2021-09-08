@@ -111,7 +111,21 @@ export default function LoginPage() {
           <span className="text-red-500 font-bold">{Object.values(errors)[0].message}</span>
         )}
         {error && error != CAPTCHA_ERROR && (
-          <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">{error}</span>
+          <>
+            <span className="p-4 rounded-lg bg-red-200 text-red-600 font-bold">{error}</span>
+
+            {watch("captcha") && (
+              <span className="text-red-600 max-w-lg">
+                หากนี่เป็นการเข้าสู่ระบบครั้งแรก อาจเกิดจากข้อผิดพลาดของระบบ
+                หากตรวจสอบอย่างละเอียดแล้วว่ากรอกข้อมูลถูกต้อง แต่ยังไม่สามารถเข้าสู่ระบบได้ กรุณา
+                <Link href="/report" prefetch={false}>
+                  <a className="text-blue-600 underline" target="_blank" rel="noreferrer noopener">
+                    รายงานปัญหา
+                  </a>
+                </Link>
+              </span>
+            )}
+          </>
         )}
         <form className="flex flex-col gap-8" onSubmit={handleSubmit(_signIn)}>
           <div className="sm:grid sm:grid-cols-2 flex flex-col gap-4 text-left items-center">
