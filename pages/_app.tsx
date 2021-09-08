@@ -6,7 +6,7 @@ import LogRocket from "logrocket";
 import MainProvider from "@/shared/provider";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  LogRocket.init("y60w1s/election");
+  //LogRocket.init("y60w1s/election");
   return (
     <MainProvider>
       <Component {...pageProps}></Component>

@@ -132,10 +132,10 @@ export function useProvideAuth(): IAuthContext {
           stdClass: claims.class,
           stdNo: claims.no,
         });
-        LogRocket.identify(curUser.uid, {
+        /*LogRocket.identify(curUser.uid, {
           name: curUser.displayName as string,
           email: curUser.email as string,
-        });
+        });*/
         setUser(curUser);
       } else {
         setUser(null);
