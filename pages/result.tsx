@@ -41,7 +41,7 @@ export default function ResultsPage({ candidates }: ServerProps) {
           {data && (
             <div className="flex flex-col text-right gap-1">
               <span className="flex-shrink-0 font-bold text-green-600">
-                จำนวนผู้ลงทะเบียนทั้งหมด {data.users}/947 คน
+                จำนวนผู้ลงทะเบียนทั้งหมด {data.users - 10} คน
               </span>
               <span className="text-sm text-gray-500">
                 คิดเป็น {((data.users * 100) / 947).toFixed(2)}% ของนักเรียนทั้งหมด
