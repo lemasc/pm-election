@@ -26,6 +26,10 @@ const navigation: Navigation[] = [
     href: "/candidates",
     title: "ข้อมูลการเลือกตั้ง",
   },
+  {
+    href: "/result",
+    title: "ผลการลงคะแนน",
+  },
   /* {
     href: "/instructions",
     title: "ขั้นตอนการใช้งาน",

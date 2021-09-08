@@ -3,7 +3,13 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Transition } from "@headlessui/react";
-import { ClockIcon, LoginIcon, UserIcon, FlagIcon } from "@heroicons/react/outline";
+import {
+  ClockIcon,
+  LoginIcon,
+  UserIcon,
+  FlagIcon,
+  SpeakerphoneIcon,
+} from "@heroicons/react/outline";
 import { useWindowWidth } from "@react-hook/window-size/throttled";
 
 import logo from "../public/logo.png";
@@ -172,18 +178,31 @@ export default function HomePage({ config }: ConfigPageProps) {
               โรงเรียนมัธยมสาธิตวัดพระศรีมหาธาตุ มหาวิทยาลัยราชภัฏพระนคร
             </span>
             <div className="flex flex-col gap-4 py-4">
+              {false && (
+                <button
+                  disabled={!config.canRegister}
+                  title={config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
+                  onClick={() => go("/login")}
+                  className="btn-large btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
+                >
+                  <LoginIcon className="h-10 w-10" transform="scale(-1,1)" />
+                  <div className="flex flex-col gap-0.5">
+                    <b className="font-medium text-xl">เริ่มต้นใช้งาน</b>
+                    <span className="font-light text-sm">
+                      {config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
+                    </span>
+                  </div>
+                </button>
+              )}
               <button
-                disabled={!config.canRegister}
-                title={config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
-                onClick={() => go("/login")}
-                className="btn-large btn bg-apple-500 from-apple-500 to-apple-600 ring-apple-500 text-white"
+                title="ประกาศผลการลงคะแนน"
+                onClick={() => go("/result")}
+                className="btn-large btn bg-purple-500 from-purple-500 to-purple-600 ring-purple-500 text-white"
               >
-                <LoginIcon className="h-10 w-10" transform="scale(-1,1)" />
+                <SpeakerphoneIcon className="h-10 w-10" />
                 <div className="flex flex-col gap-0.5">
-                  <b className="font-medium text-xl">เริ่มต้นใช้งาน</b>
-                  <span className="font-light text-sm">
-                    {config.canRegister ? "เข้าสู่ระบบการลงคะแนน" : "อยู่นอกระยะเวลาการลงคะแนน"}
-                  </span>
+                  <b className="font-medium text-xl">ประกาศผล</b>
+                  <span className="font-light text-sm">ประกาศผลการลงคะแนน</span>
                 </div>
               </button>
               <button

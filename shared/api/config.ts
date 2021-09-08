@@ -24,7 +24,7 @@ export type ConfigPageProps = {
 };
 
 export async function getServerConfig(): Promise<ServerConfig> {
-  const date = dayjs.utc().add(7, "hours");
+  const date = process.env.NODE_ENV == "production" ? dayjs.utc().add(7, "hours") : dayjs();
   const t = await admin.remoteConfig().getTemplate();
   function getParam(key: string) {
     return t.parameters[key] && t.parameters[key].defaultValue

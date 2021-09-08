@@ -10,7 +10,7 @@ import { withIronSession, Handler, Session } from "next-iron-session";
 export const sessionOptions = {
   password: process.env.SESSION_PASSWORD as string,
   cookieName: "election",
-  ttl: 60 * 15 + 60,
+  //ttl: 60 * 15 + 60,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
     maxage: -1,

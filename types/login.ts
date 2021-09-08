@@ -39,3 +39,11 @@ type CustomClaims = {
 };
 export type CustomServerToken = admin.auth.DecodedIdToken & CustomClaims;
 export type CustomToken = ParsedToken & CustomClaims;
+
+type VotesSummary = {
+  [key: string]: number;
+};
+export type Summary = VotesSummary & {
+  timestamp: Date;
+  users: number;
+};

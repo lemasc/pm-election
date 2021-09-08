@@ -11,17 +11,10 @@ import th from "dayjs/locale/th";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { SSRContext, withSession } from "@/shared/api/session";
 import { getServerConfig, ServerConfig } from "@/shared/api/config";
+import { Summary } from "@/types/login";
 
 dayjs.locale(th);
 dayjs.extend(localizedFormat);
-
-type VotesSummary = {
-  [key: string]: number;
-};
-type Summary = VotesSummary & {
-  timestamp: Date;
-  users: number;
-};
 
 function Widget({
   show,
