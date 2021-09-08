@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function SuccessPage() {
-  const { signOut, votes: props, ready } = useAuth();
+  const { signOut, profile, votes: props, ready } = useAuth();
   const router = useRouter();
   useEffect(() => {
     if (ready && !(props && props.selected)) {
@@ -16,7 +16,7 @@ export default function SuccessPage() {
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Wizard>
         <h2 className="text-2xl">ลงคะแนนเรียบร้อยแล้ว!</h2>
-        {props && <Profile {...props} />}
+        {props && profile && <Profile {...profile} votes={props} />}
 
         <b className="font-bold text-apple-600">กรุณาบันทึกภาพหน้าจอไว้เป็นหลักฐานในการลงคะแนน</b>
         <button
