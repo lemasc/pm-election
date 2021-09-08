@@ -49,7 +49,7 @@ export default function ResultsPage({ candidates }: ServerProps) {
             </div>
           )}
         </div>
-        <div className=" grid sm:grid-cols-2 items-center justify-center gap-6">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-3 gap-6">
           {data &&
             candidates &&
             [3, 2, 1, 6, 4, 7, 5].map((d, i) => {
@@ -59,10 +59,10 @@ export default function ResultsPage({ candidates }: ServerProps) {
                 <div
                   className={`${
                     i === 0 ? "bg-blue-500 bg-opacity-80 text-white" : "bg-white"
-                  } rounded shadow py-6 pr-6 border flex flex-row flex-wrap p-4 gap-4 justify-center "`}
+                  } rounded shadow py-6 pr-6 border flex flex-row flex-wrap p-4 gap-4 justify-center w-full"`}
                   key={c.index}
                 >
-                  <div className="flex sm:flex-row flex-col gap-4 w-full">
+                  <div className="flex sm:flex-row flex-col gap-4 w-full flex-grow">
                     <div className="flex">
                       <div className="flex-shrink-0 flex-grow">
                         <Image
